@@ -1,0 +1,21 @@
+name: CI
+
+on: push
+
+jobs:
+  rails_test:
+    name: Rails test
+    runs-on: ubuntu-latest
+    container:
+      image: ruby:3.0.2
+      env:
+        RAILS_ENV: test
+    steps:
+      - uses: actions/checkout@v2
+      - name: Bundle install
+        run: bundle install --path=vendor/bundle --jobs 4 --retry 3
+      - name: Setup test database
+        run: |
+          bundle exec rails db:setup
+      - name: Run tests
+        run: bundle exec rspec
