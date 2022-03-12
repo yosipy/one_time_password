@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:13.4
+    environment:
+      - 'POSTGRES_USER=pguser'
+      - 'POSTGRES_PASSWORD=password'
+    volumes:
+      - 'postgresql:/var/lib/postgresql/data'
+  app:
+    build: .
+    # command: >
+    #   bash -c "rm -f tmp/pids/server.pid &&
+    #     bundle exec rails s -p 3000 -b '0.0.0.0'"
+    # ports:
+    #   - '3000:3000'
+    volumes:
+      - '.:/app'
+    environment:
+      - 'RAILS_ENV=development'
+      - 'DATABASE_PORT=5432'
+      - 'DATABASE_HOST=db'
+    tty: true
+    stdin_open: true
+    depends_on:
+      - db
+    links:
+      - db
+
+volumes:
+  postgresql:

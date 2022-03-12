@@ -3,8 +3,9 @@
 /log/*.log
 /pkg/
 /tmp/
-/test/dummy/db/*.sqlite3
-/test/dummy/db/*.sqlite3-*
-/test/dummy/log/*.log
-/test/dummy/storage/
-/test/dummy/tmp/
+/test/spec/db/*.sqlite3
+/test/spec/db/*.sqlite3-*
+/test/spec/log/*.log
+/test/spec/storage/
+/test/spec/tmp/
+Gemfile.lock
