@@ -1,4 +1,4 @@
-require "spec_helper"
+require "rails_helper"
 
 describe 'OneTimePassword' do
   it 'it has a version number' do
