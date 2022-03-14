@@ -1,4 +1,7 @@
+__* This Gem is still incomplete.__
+
 # OneTimePassword
+
 Short description and motivation.
 
 ## Usage
