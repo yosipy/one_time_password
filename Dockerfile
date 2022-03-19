@@ -9,4 +9,5 @@ WORKDIR /app
 
 COPY Gemfile /app/
 
-RUN bundle install
+# comment out: arise `executor failed running [/bin/sh -c bundle install]: exit code: 15`
+# RUN bundle install
