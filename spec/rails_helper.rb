@@ -68,4 +68,6 @@ RSpec.configure do |config|
 
   # Comment out: arise `Failure/Error: config.include FactoryBot::Syntax::methods`
   # config.include FactoryBot::Syntax::methods
+
+  config.include ActiveSupport::Testing::TimeHelpers
 end
