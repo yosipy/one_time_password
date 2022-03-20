@@ -5,6 +5,7 @@
 /tmp/
 /spec/dummy/app/models/one_time_authentication.rb
 /spec/dummy/db/migrate/*_create_one_time_authentication.rb
+/spec/dummy/db/schema.rb
 /spec/dummy/db/*.sqlite3
 /spec/dummy/db/*.sqlite3-*
 /spec/dummy/log/*.log
