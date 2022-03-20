@@ -16,7 +16,9 @@ jobs:
         run: bundle install --path=vendor/bundle --jobs 4 --retry 3
       - name: generate migration and model files
         run: |
+          cd spec/dummy/
           bundle exec rails g one_time_password:install
+          cd ../../
       - name: Setup test database
         run: |
           bundle exec rails db:setup
