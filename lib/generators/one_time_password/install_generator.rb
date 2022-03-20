@@ -11,6 +11,16 @@ module OneTimePassword
 
     source_root File.expand_path('templates', __dir__)
 
+    def create_initializer_file
+      template = 'one_time_password'
+      file_name =  "config/initializers/#{template}.rb"
+      if File.exist?(file_name)
+        ::Kernel.warn "Model already exists: #{template}"
+      else
+        template("#{template}.rb", file_name)
+      end
+    end
+
     def create_migration_file
       template = 'create_one_time_authentication'
       migration_dir = File.expand_path("db/migrate")
