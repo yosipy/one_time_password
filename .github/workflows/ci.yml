@@ -21,6 +21,8 @@ jobs:
           cd ../../
       - name: Setup test database
         run: |
+          cd spec/dummy/
           bundle exec rails db:migrate:reset
+          cd ../../
       - name: Run tests
         run: bundle exec rspec
