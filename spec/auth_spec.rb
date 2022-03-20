@@ -24,15 +24,15 @@ describe 'OneTimePassword::Auth' do
   end
   let(:user_key) { 'user@example.com' }
 
-  describe '#self.find_context' do
-    before do
-      OneTimePassword::FUNCTION_NAMES = function_names
-      OneTimePassword::CONTEXTS = [
-        sign_up_context,
-        sign_in_context,
-      ]
-    end
+  before do
+    OneTimePassword::FUNCTION_NAMES = function_names
+    OneTimePassword::CONTEXTS = [
+      sign_up_context,
+      sign_in_context,
+    ]
+  end
 
+  describe '#self.find_context' do
     context 'Exist function_name' do
       context 'Exist version' do
         it 'Return selected context' do
@@ -67,14 +67,6 @@ describe 'OneTimePassword::Auth' do
   end
 
   describe '#create_one_time_authentication' do
-    before do
-      OneTimePassword::FUNCTION_NAMES = function_names
-      OneTimePassword::CONTEXTS = [
-        sign_up_context,
-        sign_in_context,
-      ]
-    end
-
     context 'Select context of password length 10' do
       let(:function_name) { function_names[:sign_in] }
       let(:auth) do
