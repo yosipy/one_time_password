@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :one_time_authentication do
-    function_identifier { nil }
+    function_name { nil }
     version { 0 }
     sequence(:user_key) { |n|
       "user#{n}@example.com"

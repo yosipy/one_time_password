@@ -1,9 +1,9 @@
 module OneTimePassword
   class Auth
-    def self.find_context(function_identifier, version)
+    def self.find_context(function_name, version)
       context = OneTimePassword::CONTEXTS
         .select{ |context|
-          context[:function_identifier] == function_identifier &&
+          context[:function_name] == function_name &&
             context[:version] == version
         }
         .first
@@ -22,17 +22,17 @@ module OneTimePassword
     end
 
     def initialize(
-      function_identifier, version, user_key
+      function_name, version, user_key
     )
-      @function_identifier = function_identifier
+      @function_name = function_name
       @version = version
       @user_key = user_key
-      @context = self.class.find_context(@function_identifier, @version)
+      @context = self.class.find_context(@function_name, @version)
     end
 
     def create_one_time_authentication
       @one_time_authentication = OneTimeAuthentication.new(
-        function_identifier: @function_identifier,
+        function_name: @function_name,
         version: @version,
         user_key: @user_key,
         password_length: @context[:password_length],
@@ -47,7 +47,7 @@ module OneTimePassword
 
     def find_one_time_authentication
       @one_time_authentication = OneTimeAuthentication
-        .where(function_identifier: @function_identifier)
+        .where(function_name: @function_name)
         .where(version: @version)
         .where(user_key: @user_key)
         .last

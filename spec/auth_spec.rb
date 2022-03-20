@@ -1,12 +1,12 @@
 require "rails_helper"
 
 describe 'OneTimePassword::Auth' do
-  let(:function_identifiers) do
+  let(:function_names) do
     { sign_up: 0, sign_in: 1, change_email: 2 }
   end
   let(:sign_up_context) do
     {
-      function_identifier: function_identifiers[:sign_up],
+      function_name: function_names[:sign_up],
       version: 0,
       expires_in: 30.minutes,
       max_count: 5,
@@ -15,7 +15,7 @@ describe 'OneTimePassword::Auth' do
   end
   let(:sign_in_context) do
     {
-      function_identifier: function_identifiers[:sign_in],
+      function_name: function_names[:sign_in],
       version: 0,
       expires_in: 30.minutes,
       max_count: 5,
@@ -26,40 +26,40 @@ describe 'OneTimePassword::Auth' do
 
   describe '#self.find_context' do
     before do
-      OneTimePassword::FUNCTION_IDENTIFIERS = function_identifiers
+      OneTimePassword::FUNCTION_NAMES = function_names
       OneTimePassword::CONTEXTS = [
         sign_up_context,
         sign_in_context,
       ]
     end
 
-    context 'Exist function_identifier' do
+    context 'Exist function_name' do
       context 'Exist version' do
         it 'Return selected context' do
-          expect(OneTimePassword::Auth.find_context(function_identifiers[:sign_up], 0))
+          expect(OneTimePassword::Auth.find_context(function_names[:sign_up], 0))
             .to eq(sign_up_context)
         end
       end
 
       context 'Not exist version' do
         it 'Raise error' do
-          expect{ OneTimePassword::Auth.find_context(function_identifiers[:sign_up], 1) }
+          expect{ OneTimePassword::Auth.find_context(function_names[:sign_up], 1) }
             .to raise_error(ArgumentError, 'Not found context.')
         end
       end
     end
 
-    context 'Not exist function_identifier' do
+    context 'Not exist function_name' do
       context 'exist version' do
         it 'Raise error' do
-          expect{ OneTimePassword::Auth.find_context(function_identifiers[:change_email], 0) }
+          expect{ OneTimePassword::Auth.find_context(function_names[:change_email], 0) }
             .to raise_error(ArgumentError, 'Not found context.')
         end
       end
 
       context 'Not exist version' do
         it 'Raise error' do
-          expect{ OneTimePassword::Auth.find_context(function_identifiers[:change_email], 1) }
+          expect{ OneTimePassword::Auth.find_context(function_names[:change_email], 1) }
            .to raise_error(ArgumentError, 'Not found context.')
         end
       end
@@ -68,7 +68,7 @@ describe 'OneTimePassword::Auth' do
 
   describe '#create_one_time_authentication' do
     before do
-      OneTimePassword::FUNCTION_IDENTIFIERS = function_identifiers
+      OneTimePassword::FUNCTION_NAMES = function_names
       OneTimePassword::CONTEXTS = [
         sign_up_context,
         sign_in_context,
@@ -76,10 +76,10 @@ describe 'OneTimePassword::Auth' do
     end
 
     context 'Select context of password length 10' do
-      let(:function_identifier) { function_identifiers[:sign_in] }
+      let(:function_name) { function_names[:sign_in] }
       let(:auth) do
         OneTimePassword::Auth.new(
-          function_identifier,
+          function_name,
           0,
           user_key
         )
@@ -105,7 +105,7 @@ describe 'OneTimePassword::Auth' do
 
           auth.create_one_time_authentication
           one_time_authentication = auth.instance_variable_get(:@one_time_authentication)
-          expect(one_time_authentication.function_identifier).to eq('sign_in')
+          expect(one_time_authentication.function_name).to eq('sign_in')
           expect(one_time_authentication.version).to eq(0)
           expect(one_time_authentication.user_key).to eq(user_key)
           expect(one_time_authentication.password_length).to eq(sign_in_context[:password_length])
@@ -120,31 +120,31 @@ describe 'OneTimePassword::Auth' do
   end
 
   describe '#find_one_time_authentication' do
-    let(:function_identifier) { function_identifiers[:sign_in] }
+    let(:function_name) { function_names[:sign_in] }
     let(:auth) do
       OneTimePassword::Auth.new(
-        function_identifier,
+        function_name,
         0,
         user_key
       )
     end
 
-    context 'There is a match function_identifier, version and user_key in the table' do
+    context 'There is a match function_name, version and user_key in the table' do
       let!(:one_time_authentications) do
         3.times.map do |num|
           FactoryBot.create(
             :one_time_authentication,
-            function_identifier: :sign_in,
+            function_name: :sign_in,
             user_key: user_key
           )
         end
       end
   
-      it 'Return last one_time_authentication in match function_identifier, version and user_key' do
+      it 'Return last one_time_authentication in match function_name, version and user_key' do
         expect(auth.find_one_time_authentication.id).to eq(one_time_authentications.last.id)
       end
 
-      it 'Has @one_time_authentication in match function_identifier, version and user_key' do
+      it 'Has @one_time_authentication in match function_name, version and user_key' do
         auth.find_one_time_authentication
         one_time_authentication = auth.instance_variable_get(:@one_time_authentication)
         expect(one_time_authentication.id).to eq(one_time_authentications.last.id)
@@ -159,12 +159,12 @@ describe 'OneTimePassword::Auth' do
       end
     end
 
-    context 'There is not a match function_identifier in the table' do
+    context 'There is not a match function_name in the table' do
       let!(:one_time_authentications) do
         3.times.map do |num|
           FactoryBot.create(
             :one_time_authentication,
-            function_identifier: :sign_up,
+            function_name: :sign_up,
             user_key: user_key
           )
         end
@@ -186,7 +186,7 @@ describe 'OneTimePassword::Auth' do
         3.times.map do |num|
           FactoryBot.create(
             :one_time_authentication,
-            function_identifier: :sign_in,
+            function_name: :sign_in,
             version: 1,
             user_key: user_key
           )
@@ -209,7 +209,7 @@ describe 'OneTimePassword::Auth' do
         3.times.map do |num|
           FactoryBot.create(
             :one_time_authentication,
-            function_identifier: :sign_in,
+            function_name: :sign_in,
             user_key: 'other_user@example.com'
           )
         end
@@ -228,10 +228,10 @@ describe 'OneTimePassword::Auth' do
   end
 
   describe '#expired?' do
-    let(:function_identifier) { function_identifiers[:sign_in] }
+    let(:function_name) { function_names[:sign_in] }
     let(:auth) do
       OneTimePassword::Auth.new(
-        function_identifier,
+        function_name,
         0,
         user_key
       )
@@ -241,7 +241,7 @@ describe 'OneTimePassword::Auth' do
     let!(:one_time_authentication) do
       FactoryBot.create(
         :one_time_authentication,
-        function_identifier: :sign_in,
+        function_name: :sign_in,
         user_key: user_key,
         created_at: beginning_of_validity_period
       )
@@ -285,10 +285,10 @@ describe 'OneTimePassword::Auth' do
   end
 
   describe '#under_valid_count?' do
-    let(:function_identifier) { function_identifiers[:sign_in] }
+    let(:function_name) { function_names[:sign_in] }
     let(:auth) do
       OneTimePassword::Auth.new(
-        function_identifier,
+        function_name,
         0,
         user_key
       )
@@ -296,7 +296,7 @@ describe 'OneTimePassword::Auth' do
     let!(:one_time_authentication) do
       FactoryBot.create(
         :one_time_authentication,
-        function_identifier: :sign_in,
+        function_name: :sign_in,
         user_key: user_key,
         count: count
       )
@@ -331,10 +331,10 @@ describe 'OneTimePassword::Auth' do
   end
 
   describe '#authenticate_client_token' do
-    let(:function_identifier) { function_identifiers[:sign_in] }
+    let(:function_name) { function_names[:sign_in] }
     let(:auth) do
       OneTimePassword::Auth.new(
-        function_identifier,
+        function_name,
         0,
         user_key
       )
@@ -344,7 +344,7 @@ describe 'OneTimePassword::Auth' do
       allow(SecureRandom).to receive(:urlsafe_base64).and_return('XXXXXXXXXXXXXXX')
       FactoryBot.create(
         :one_time_authentication,
-        function_identifier: :sign_in,
+        function_name: :sign_in,
         user_key: user_key
       )
     end
@@ -401,10 +401,10 @@ describe 'OneTimePassword::Auth' do
   end
 
   describe '#authenticate_password' do
-    let(:function_identifier) { function_identifiers[:sign_in] }
+    let(:function_name) { function_names[:sign_in] }
     let(:auth) do
       OneTimePassword::Auth.new(
-        function_identifier,
+        function_name,
         0,
         user_key
       )
@@ -414,7 +414,7 @@ describe 'OneTimePassword::Auth' do
     let!(:one_time_authentication) do
       FactoryBot.create(
         :one_time_authentication,
-        function_identifier: :sign_in,
+        function_name: :sign_in,
         user_key: user_key,
         password_length: sign_in_context[:password_length],
         count: count,

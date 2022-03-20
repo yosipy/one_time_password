@@ -12,7 +12,7 @@
 
 ActiveRecord::Schema[7.0].define(version: 2022_03_13_013419) do
   create_table "one_time_authentications", force: :cascade do |t|
-    t.integer "function_identifier", null: false
+    t.integer "function_name", null: false
     t.integer "version", null: false
     t.string "user_key", null: false
     t.string "client_token"

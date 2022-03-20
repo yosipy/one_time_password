@@ -1,7 +1,7 @@
 class CreateOneTimeAuthentication < ActiveRecord::Migration[7.0]
   def change
     create_table :one_time_authentications do |t|
-      t.integer :function_identifier, null: false
+      t.integer :function_name, null: false
       t.integer :version, null: false
       t.string :user_key, null: false, index: true
       t.string :client_token
