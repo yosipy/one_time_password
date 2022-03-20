@@ -26,6 +26,16 @@ module OneTimePassword
       end
     end
 
+    def create_model_file
+      template = 'one_time_authentication'
+      file_name =  "app/models/#{template}.rb"
+      if File.exist?(file_name)
+        ::Kernel.warn "Model already exists: #{template}"
+      else
+        template("#{template}.rb", file_name)
+      end
+    end
+
     private
 
     def migration_version
