@@ -16,22 +16,23 @@ module OneTimePassword
 
     def create_initializer_file
       template = 'one_time_password'
-      file_name =  "config/initializers/#{template}.rb"
-      if !File.exist?(file_name) || options[:warning_over_write]
-        template("#{template}.rb", file_name)
+      file_path =  "config/initializers/#{template}.rb"
+
+      if !File.exist?(file_path) || options[:warning_over_write]
+        template(file_path, File.expand_path(file_path))
       else
-        ::Kernel.warn "Model already exists: #{template}"
+        ::Kernel.warn "Initializers already exists: #{template}"
       end
     end
 
     def create_migration_file
       template = 'create_one_time_authentication'
-      migration_dir = File.expand_path("db/migrate")
+      file_dir = 'db/migrate'
 
-      if !self.class.migration_exists?(migration_dir, template) || options[:warning_over_write]
+      if !self.class.migration_exists?(File.expand_path(file_dir), template) || options[:warning_over_write]
         migration_template(
-            "#{template}.rb.erb",
-            "#{migration_dir}/#{template}.rb",
+            "#{file_dir}/#{template}.rb.erb",
+            "#{File.expand_path(file_dir)}/#{template}.rb",
             migration_version: migration_version
         )
       else
@@ -41,9 +42,9 @@ module OneTimePassword
 
     def create_model_file
       template = 'one_time_authentication'
-      file_name =  "app/models/#{template}.rb"
-      if !File.exist?(file_name) || options[:warning_over_write]
-        template("#{template}.rb", file_name)
+      file_path =  "app/models/#{template}.rb"
+      if !File.exist?(file_path) || options[:warning_over_write]
+        template(file_path, File.expand_path(file_path))
       else
         ::Kernel.warn "Model already exists: #{template}"
       end
