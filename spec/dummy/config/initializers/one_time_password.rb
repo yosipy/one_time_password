@@ -9,7 +9,7 @@ module OneTimePassword
   # end
   # ```
   FUNCTION_NAMES = {
-    # sign_up: 0, sign_in: 1, change_email: 2
+    sign_up: 0, sign_in: 1, change_email: 2
   }
 
   # {
