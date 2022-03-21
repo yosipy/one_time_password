@@ -14,15 +14,15 @@ module OneTimePassword
 
     source_root File.expand_path('templates', __dir__)
 
-    def create_initializer_file
-      template = 'one_time_password'
-      file_name =  "config/initializers/#{template}.rb"
-      if !File.exist?(file_name) || options[:warning_over_write]
-        template("#{template}.rb", file_name)
-      else
-        ::Kernel.warn "Model already exists: #{template}"
-      end
-    end
+    # def create_initializer_file
+    #   template = 'one_time_password'
+    #   file_name =  "config/initializers/#{template}.rb"
+    #   if !File.exist?(file_name) || options[:warning_over_write]
+    #     template("#{template}.rb", file_name)
+    #   else
+    #     ::Kernel.warn "Model already exists: #{template}"
+    #   end
+    # end
 
     def create_migration_file
       template = 'create_one_time_authentication'
