@@ -1,12 +1,9 @@
 require "rails_helper"
 
 describe 'OneTimePassword::Auth' do
-  let(:function_names) do
-    { sign_up: 0, sign_in: 1, change_email: 2 }
-  end
   let(:sign_up_context) do
     {
-      function_name: function_names[:sign_up],
+      function_name: OneTimePassword::FUNCTION_NAMES[:sign_up],
       version: 0,
       expires_in: 30.minutes,
       max_count: 5,
@@ -15,7 +12,7 @@ describe 'OneTimePassword::Auth' do
   end
   let(:sign_in_context) do
     {
-      function_name: function_names[:sign_in],
+      function_name: OneTimePassword::FUNCTION_NAMES[:sign_in],
       version: 0,
       expires_in: 30.minutes,
       max_count: 5,
@@ -25,7 +22,6 @@ describe 'OneTimePassword::Auth' do
   let(:user_key) { 'user@example.com' }
 
   before do
-    OneTimePassword::FUNCTION_NAMES = function_names
     OneTimePassword::CONTEXTS = [
       sign_up_context,
       sign_in_context,
@@ -34,32 +30,36 @@ describe 'OneTimePassword::Auth' do
 
   describe '#self.find_context' do
     context 'Exist function_name' do
+      let(:function_name) { OneTimePassword::FUNCTION_NAMES[:sign_up] }
+
       context 'Exist version' do
         it 'Return selected context' do
-          expect(OneTimePassword::Auth.find_context(function_names[:sign_up], 0))
+          expect(OneTimePassword::Auth.find_context(function_name, 0))
             .to eq(sign_up_context)
         end
       end
 
       context 'Not exist version' do
         it 'Raise error' do
-          expect{ OneTimePassword::Auth.find_context(function_names[:sign_up], 1) }
+          expect{ OneTimePassword::Auth.find_context(function_name, 1) }
             .to raise_error(ArgumentError, 'Not found context.')
         end
       end
     end
 
     context 'Not exist function_name' do
+      let(:function_name) { OneTimePassword::FUNCTION_NAMES[:change_email] }
+
       context 'exist version' do
         it 'Raise error' do
-          expect{ OneTimePassword::Auth.find_context(function_names[:change_email], 0) }
+          expect{ OneTimePassword::Auth.find_context(function_name, 0) }
             .to raise_error(ArgumentError, 'Not found context.')
         end
       end
 
       context 'Not exist version' do
         it 'Raise error' do
-          expect{ OneTimePassword::Auth.find_context(function_names[:change_email], 1) }
+          expect{ OneTimePassword::Auth.find_context(function_name, 1) }
            .to raise_error(ArgumentError, 'Not found context.')
         end
       end
@@ -68,7 +68,8 @@ describe 'OneTimePassword::Auth' do
 
   describe '#create_one_time_authentication' do
     context 'Select context of password length 10' do
-      let(:function_name) { function_names[:sign_in] }
+      let(:function_name) { OneTimePassword::FUNCTION_NAMES[:sign_in] }
+
       let(:auth) do
         OneTimePassword::Auth.new(
           function_name,
@@ -112,7 +113,7 @@ describe 'OneTimePassword::Auth' do
   end
 
   describe '#find_one_time_authentication' do
-    let(:function_name) { function_names[:sign_in] }
+    let(:function_name) { OneTimePassword::FUNCTION_NAMES[:sign_in] }
     let(:auth) do
       OneTimePassword::Auth.new(
         function_name,
@@ -220,7 +221,7 @@ describe 'OneTimePassword::Auth' do
   end
 
   describe '#expired?' do
-    let(:function_name) { function_names[:sign_in] }
+    let(:function_name) { OneTimePassword::FUNCTION_NAMES[:sign_in] }
     let(:auth) do
       OneTimePassword::Auth.new(
         function_name,
@@ -277,7 +278,7 @@ describe 'OneTimePassword::Auth' do
   end
 
   describe '#under_valid_count?' do
-    let(:function_name) { function_names[:sign_in] }
+    let(:function_name) { OneTimePassword::FUNCTION_NAMES[:sign_in] }
     let(:auth) do
       OneTimePassword::Auth.new(
         function_name,
@@ -323,7 +324,7 @@ describe 'OneTimePassword::Auth' do
   end
 
   describe '#authenticate_client_token' do
-    let(:function_name) { function_names[:sign_in] }
+    let(:function_name) { OneTimePassword::FUNCTION_NAMES[:sign_in] }
     let(:auth) do
       OneTimePassword::Auth.new(
         function_name,
@@ -393,7 +394,7 @@ describe 'OneTimePassword::Auth' do
   end
 
   describe '#authenticate_password' do
-    let(:function_name) { function_names[:sign_in] }
+    let(:function_name) { OneTimePassword::FUNCTION_NAMES[:sign_in] }
     let(:auth) do
       OneTimePassword::Auth.new(
         function_name,
