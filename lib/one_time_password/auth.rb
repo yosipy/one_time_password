@@ -8,17 +8,17 @@ module OneTimePassword
         }
         .first
 
-        if context.nil?
-          raise ArgumentError.new('Not found context.')
-        elsif context[:expires_in].class != ActiveSupport::Duration
-          raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:expires_in]')
-        elsif context[:max_count].class != Integer
-          raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:max_count]')
-        elsif context[:password_length].class != Integer
-          raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:password_length]')
-        end
+      if context.nil?
+        raise ArgumentError.new('Not found context.')
+      elsif context[:expires_in].class != ActiveSupport::Duration
+        raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:expires_in]')
+      elsif context[:max_count].class != Integer
+        raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:max_count]')
+      elsif context[:password_length].class != Integer
+        raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:password_length]')
+      end
 
-        context
+      context
     end
 
     def initialize(
