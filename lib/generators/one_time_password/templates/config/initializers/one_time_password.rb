@@ -20,20 +20,20 @@ module OneTimePassword
   #   password_length: Password length.At 6, for example, the password would be 123456.(Integer)
   # }
   CONTEXTS = [
-    # {
-    #   function_name: FUNCTION_NAMES[:sign_up],
-    #   version: 0,
-    #   expires_in: 30.minutes,
-    #   max_count: 5,
-    #   password_length: 6
-    # },
-    # {
-    #   function_name: FUNCTION_NAMES[:sign_in],
-    #   version: 0,
-    #   expires_in: 30.minutes,
-    #   max_count: 5,
-    #   password_length: 6
-    # },
+    {
+      function_name: FUNCTION_NAMES[:sign_up],
+      version: 0,
+      expires_in: 30.minutes,
+      max_count: 5,
+      password_length: 6,
+    },
+    {
+      function_name: FUNCTION_NAMES[:sign_in],
+      version: 0,
+      expires_in: 30.minutes,
+      max_count: 5,
+      password_length: 10
+    },
     # {
     #   function_name: FUNCTION_NAMES[:change_email],
     #   version: 0,
