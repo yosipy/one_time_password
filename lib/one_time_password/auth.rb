@@ -92,6 +92,7 @@ module OneTimePassword
         end
 
       if result
+        @one_time_authentication.authenticated_at = Time.zone.now
         # Put invalid token(nil) in client_token, and return nil
         @one_time_authentication.client_token = nil
       end

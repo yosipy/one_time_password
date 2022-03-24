@@ -10,6 +10,7 @@ class CreateOneTimeAuthentication < ActiveRecord::Migration<%= migration_version
       t.integer :expires_seconds, null: false
       t.integer :count, null: false, default: 0
       t.integer :max_count, null: false, default: 3
+      t.datetime :authenticated_at
 
       t.timestamps
     end
