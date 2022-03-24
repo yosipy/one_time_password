@@ -16,6 +16,10 @@ module OneTimePassword
         raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:max_count]')
       elsif context[:password_length].class != Integer
         raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:password_length]')
+      elsif context[:password_generate_limit].class != Integer
+        raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:password_generate_limit]')
+      elsif context[:password_generate_period].class != ActiveSupport::Duration
+        raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:password_generate_period]')
       end
 
       context

@@ -8,6 +8,8 @@ describe 'OneTimePassword::Auth' do
       expires_in: 30.minutes,
       max_count: 5,
       password_length: 6,
+      password_generate_limit: 10,
+      password_generate_period: 1.hour
     }
   end
   let(:sign_in_context) do
@@ -17,6 +19,8 @@ describe 'OneTimePassword::Auth' do
       expires_in: 30.minutes,
       max_count: 5,
       password_length: 10,
+      password_generate_limit: 10,
+      password_generate_period: 1.hour
     }
   end
   let(:user_key) { 'user@example.com' }
