@@ -8,4 +8,8 @@ class OneTimeAuthentication < OneTimePassword::Models::OneTimeAuthentication
   scope :recent, -> (time_ago) {
     order(created_at: :desc).where(created_at: ..Time.zone.now.ago(time_ago))
   }
+
+  scope :tried_authenticate_password, -> {
+    where(count >= 1)
+  }
 end
