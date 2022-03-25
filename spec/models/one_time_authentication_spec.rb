@@ -127,4 +127,34 @@ describe 'OneTimeAuthentication' do
       end
     end
   end
+
+  describe '#tried_authenticate_password' do
+    let!(:inputed_password_one_time_authentications) {
+      [1, 5].map do |count|
+        FactoryBot.create(
+          :one_time_authentication,
+          function_name: :sign_up,
+          count: count
+        )
+      end
+    }
+    let!(:uninputed_password_one_time_authentication) {
+      FactoryBot.create(
+        :one_time_authentication,
+        function_name: :sign_up,
+        count: 0
+      )
+    }
+
+    it 'Return one_time_authentication that count >= 1' do
+      expect(
+        OneTimeAuthentication
+          .tried_authenticate_password
+          .pluck(:id)
+      ).to eq([
+        inputed_password_one_time_authentications[0].id,
+        inputed_password_one_time_authentications[1].id,
+        ])
+    end
+  end
 end

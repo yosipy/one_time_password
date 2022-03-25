@@ -14,7 +14,7 @@ module OneTimePassword
       }
     
       scope :tried_authenticate_password, -> {
-        where(count >= 1)
+        where('count >= 1')
       }
 
       def self.generate_random_password(length=6)
