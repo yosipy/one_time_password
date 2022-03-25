@@ -10,7 +10,7 @@ module OneTimePassword
       }
     
       scope :recent, -> (time_ago) {
-        order(created_at: :desc).where(created_at: ..Time.zone.now.ago(time_ago))
+        where(created_at: Time.zone.now.ago(time_ago)...)
       }
     
       scope :tried_authenticate_password, -> {
