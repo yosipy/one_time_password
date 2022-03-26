@@ -154,7 +154,71 @@ describe 'OneTimeAuthentication' do
       ).to eq([
         inputed_password_one_time_authentications[0].id,
         inputed_password_one_time_authentications[1].id,
-        ])
+      ])
+    end
+  end
+
+  describe '#recent_failed_password' do
+    let!(:now) { Time.parse('2022-3-26 12:00') }
+    let!(:time_ago) { 3.hours }
+    let!(:unscope) {
+      [
+        {
+          authenticated_at: nil,
+          created_at: now.ago(time_ago).ago(10000.second),
+          count: 1
+        },
+        {
+          authenticated_at: now.ago(1.hour),
+          created_at: now.ago(time_ago),
+          count: 1
+        },
+        {
+          authenticated_at: nil,
+          created_at: now.ago(time_ago),
+          count: 0
+        },
+      ].map do |params|
+        FactoryBot.create(
+          :one_time_authentication,
+          function_name: :sign_up,
+          authenticated_at: params[:authenticated_at],
+          created_at: params[:created_at],
+          count: params[:count]
+        )
+      end
+    }
+    let!(:scope) {
+      [
+        {
+          authenticated_at: nil,
+          created_at: now.ago(time_ago),
+          count: 1
+        },
+        {
+          authenticated_at: nil,
+          created_at: now,
+          count: 5
+        },
+      ].map do |params|
+        FactoryBot.create(
+          :one_time_authentication,
+          function_name: :sign_up,
+          authenticated_at: params[:authenticated_at],
+          created_at: params[:created_at],
+          count: params[:count]
+        )
+      end
+    }
+
+    it 'Return input failed password one_time_authentications' do
+      travel_to now do
+        expect(
+          OneTimeAuthentication
+            .recent_failed_password(time_ago)
+            .pluck(:id)
+        ).to eq(scope.pluck(:id))
+      end
     end
   end
 end

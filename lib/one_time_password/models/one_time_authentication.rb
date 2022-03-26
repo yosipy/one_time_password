@@ -8,13 +8,19 @@ module OneTimePassword
       scope :unauthenticated, -> {
         where(authenticated_at: nil)
       }
-    
+
       scope :recent, -> (time_ago) {
         where(created_at: Time.zone.now.ago(time_ago)...)
       }
-    
+
       scope :tried_authenticate_password, -> {
         where('count >= 1')
+      }
+
+      scope :recent_failed_password, -> (time_ago) {
+        unauthenticated
+          .recent(time_ago)
+          .tried_authenticate_password
       }
 
       def self.generate_random_password(length=6)
