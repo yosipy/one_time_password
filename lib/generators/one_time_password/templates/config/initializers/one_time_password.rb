@@ -26,8 +26,8 @@ module OneTimePassword
       expires_in: 30.minutes,
       max_count: 5,
       password_length: 6,
-      password_generate_limit: 10,
-      password_generate_period: 1.hour
+      password_failed_limit: 10,
+      password_failed_period: 1.hour
     },
     {
       function_name: FUNCTION_NAMES[:sign_in],
@@ -35,8 +35,8 @@ module OneTimePassword
       expires_in: 30.minutes,
       max_count: 5,
       password_length: 10,
-      password_generate_limit: 10,
-      password_generate_period: 1.hour
+      password_failed_limit: 10,
+      password_failed_period: 1.hour
     },
     # {
     #   function_name: FUNCTION_NAMES[:change_email],

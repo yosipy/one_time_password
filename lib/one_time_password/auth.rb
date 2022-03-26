@@ -16,10 +16,10 @@ module OneTimePassword
         raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:max_count]')
       elsif context[:password_length].class != Integer
         raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:password_length]')
-      elsif context[:password_generate_limit].class != Integer
-        raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:password_generate_limit]')
-      elsif context[:password_generate_period].class != ActiveSupport::Duration
-        raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:password_generate_period]')
+      elsif context[:password_failed_limit].class != Integer
+        raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:password_failed_limit]')
+      elsif context[:password_failed_period].class != ActiveSupport::Duration
+        raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:password_failed_period]')
       end
 
       context
@@ -35,16 +35,25 @@ module OneTimePassword
     end
 
     def create_one_time_authentication
-      @one_time_authentication = OneTimeAuthentication.new(
-        function_name: @function_name,
-        version: @version,
-        user_key: @user_key,
-        password_length: @context[:password_length],
-        expires_seconds: @context[:expires_in].to_i,
-        max_count: @context[:max_count],
-      )
-      @one_time_authentication.set_password_and_password_length(@context[:password_length])
-      @one_time_authentication.save!
+      recent_failed_password_count =
+        OneTimeAuthentication
+          .where(user_key: @user_key)
+          .recent_failed_password(@context[:password_failed_period])
+          .count
+      if recent_failed_password_count <= @context[:password_failed_limit]
+        @one_time_authentication = OneTimeAuthentication.new(
+          function_name: @function_name,
+          version: @version,
+          user_key: @user_key,
+          password_length: @context[:password_length],
+          expires_seconds: @context[:expires_in].to_i,
+          max_count: @context[:max_count],
+        )
+        @one_time_authentication.set_password_and_password_length(@context[:password_length])
+        @one_time_authentication.save!
+      else
+        @one_time_authentication = nil
+      end
 
       @one_time_authentication
     end

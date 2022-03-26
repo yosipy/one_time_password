@@ -14,7 +14,7 @@ describe 'OneTimeAuthentication' do
       end
     end
 
-    context 'argument is any length' do
+    context 'Argument is any length' do
       let(:length) { 10 }
 
       it 'Generate string of numbers of any length' do
@@ -165,7 +165,7 @@ describe 'OneTimeAuthentication' do
       [
         {
           authenticated_at: nil,
-          created_at: now.ago(time_ago).ago(10000.second),
+          created_at: now.ago(time_ago).ago(1.second),
           count: 1
         },
         {
