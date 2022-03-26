@@ -35,12 +35,14 @@ module OneTimePassword
     end
 
     def create_one_time_authentication
-      recent_failed_password_count =
+      recent_failed_authenticate_password_count =
         OneTimeAuthentication
-          .where(user_key: @user_key)
-          .recent_failed_password(@context[:password_failed_period])
-          .count
-      if recent_failed_password_count <= @context[:password_failed_limit]
+          .recent_failed_authenticate_password_count(
+            @user_key,
+            @context[:password_failed_period]
+          )
+
+      if recent_failed_authenticate_password_count <= @context[:password_failed_limit]
         @one_time_authentication = OneTimeAuthentication.new(
           function_name: @function_name,
           version: @version,

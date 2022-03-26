@@ -82,7 +82,7 @@ describe 'OneTimePassword::Auth' do
       )
     end
 
-    context 'recent_failed_password_count <= 10 from 1 hour ago' do
+    context 'recent_failed_authenticate_password_count <= 10 from 1 hour ago' do
       let!(:failed_one_time_authentications) {
         10.times.map do |index|
           FactoryBot.create(
@@ -135,7 +135,7 @@ describe 'OneTimePassword::Auth' do
       end
     end
 
-    context "Other user's recent_failed_password_count > 10 from 1 hour ago" do
+    context "Other user's recent_failed_authenticate_password_count > 10 from 1 hour ago" do
       let(:other_user_key) { 'other_user@example.com' }
       let!(:failed_one_time_authentications) {
         11.times.map do |index|
@@ -166,7 +166,7 @@ describe 'OneTimePassword::Auth' do
       end
     end
 
-    context 'recent_failed_password_count > 10 from 1 hour ago' do
+    context 'recent_failed_authenticate_password_count > 10 from 1 hour ago' do
       let!(:failed_one_time_authentications) {
         11.times.map do |index|
           FactoryBot.create(
