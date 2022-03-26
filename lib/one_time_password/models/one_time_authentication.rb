@@ -5,8 +5,23 @@ module OneTimePassword
 
       has_secure_password
 
+      scope :unauthenticated, -> {
+        where(authenticated_at: nil)
+      }
+
+      scope :recent, -> (time_ago) {
+        where(created_at: Time.zone.now.ago(time_ago)...)
+      }
+
       def self.generate_random_password(length=6)
         length.times.map{ SecureRandom.random_number(10) }.join
+      end
+
+      def self.recent_failed_authenticate_password_count(user_key, time_ago)
+        OneTimeAuthentication
+          .where(user_key: user_key)
+          .recent(time_ago)
+          .sum(:failed_count)
       end
 
       def set_client_token

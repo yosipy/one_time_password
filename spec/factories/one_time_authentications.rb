@@ -8,7 +8,7 @@ FactoryBot.define do
     password_length { 6 }
     password { '0'*password_length }
     expires_seconds { 30.minutes.to_i }
-    count { 0 }
-    max_count { 5 }
+    failed_count { 0 }
+    max_authenticate_password_count { 5 }
   end
 end

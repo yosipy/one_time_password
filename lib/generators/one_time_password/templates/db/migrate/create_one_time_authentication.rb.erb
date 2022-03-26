@@ -8,8 +8,9 @@ class CreateOneTimeAuthentication < ActiveRecord::Migration<%= migration_version
       t.integer :password_length, null: false
       t.string :password_digest, null: false
       t.integer :expires_seconds, null: false
-      t.integer :count, null: false, default: 0
-      t.integer :max_count, null: false, default: 3
+      t.integer :failed_count, null: false, default: 0
+      t.integer :max_authenticate_password_count, null: false, default: 3
+      t.datetime :authenticated_at
 
       t.timestamps
     end
