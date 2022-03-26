@@ -13,18 +13,15 @@ module OneTimePassword
         where(created_at: Time.zone.now.ago(time_ago)...)
       }
 
-      scope :tried_authenticate_password, -> {
-        where('failed_count >= 1')
-      }
-
-      scope :recent_failed_password, -> (time_ago) {
-        unauthenticated
-          .recent(time_ago)
-          .tried_authenticate_password
-      }
-
       def self.generate_random_password(length=6)
         length.times.map{ SecureRandom.random_number(10) }.join
+      end
+
+      def self.recent_failed_authenticate_password_count(user_key, time_ago)
+        OneTimeAuthentication
+          .where(user_key: user_key)
+          .recent(time_ago)
+          .sum(:failed_count)
       end
 
       def set_client_token

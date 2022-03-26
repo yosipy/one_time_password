@@ -1,6 +1,8 @@
 require "rails_helper"
 
 describe 'OneTimeAuthentication' do
+  let(:user_key) { 'user@example.com' }
+
   describe '#self.generate_random_password' do
     context 'Argument is nil' do
       it 'Generate string of numbers of length 6' do
@@ -24,6 +26,93 @@ describe 'OneTimeAuthentication' do
           # mock
           allow(SecureRandom).to receive(:random_number).and_return(0)
           expect(OneTimeAuthentication.generate_random_password(length)).to eq('0'*length)
+        end
+      end
+    end
+  end
+
+  describe '#recent_failed_authenticate_password_count' do
+    let!(:now) { Time.parse('2022-3-26 12:00') }
+    let!(:time_ago) { 3.hours }
+
+    context "Exist same user's one_time_authentications" do
+      context 'In time' do
+        let!(:one_time_authentications) {
+          [
+            {
+              authenticated_at: nil,
+              created_at: now.ago(time_ago),
+              failed_count: 1
+            },
+            {
+              authenticated_at: now.ago(1.hour),
+              created_at: now,
+              failed_count: 10
+            },
+          ].map do |params|
+            FactoryBot.create(
+              :one_time_authentication,
+              function_name: :sign_up,
+              user_key: user_key,
+              authenticated_at: params[:authenticated_at],
+              created_at: params[:created_at],
+              failed_count: params[:failed_count]
+            )
+          end
+        }
+  
+        it 'Return sum failed_count in time' do
+          travel_to now do
+            expect(
+              OneTimeAuthentication
+                .recent_failed_authenticate_password_count(user_key, time_ago)
+            ).to eq(11)
+          end
+        end
+      end
+
+      context 'Out time' do
+        let!(:one_time_authentication) {
+          FactoryBot.create(
+            :one_time_authentication,
+            function_name: :sign_up,
+            user_key: user_key,
+            authenticated_at: nil,
+            created_at: now.ago(time_ago).ago(1.second),
+            failed_count: 1
+          )
+        }
+  
+        it 'Return 0' do
+          travel_to now do
+            expect(
+              OneTimeAuthentication
+                .recent_failed_authenticate_password_count(user_key, time_ago)
+            ).to eq(0)
+          end
+        end
+      end
+    end
+
+    context "Not exist same user's one_time_authentications" do
+      let(:other_user_key) { 'other_user@example.com' }
+      let!(:one_time_authentication) {
+        FactoryBot.create(
+          :one_time_authentication,
+          function_name: :sign_up,
+          user_key: other_user_key,
+          authenticated_at: nil,
+          created_at: now.ago(time_ago),
+          failed_count: 1
+        )
+      }
+
+      it 'Return 0' do
+        travel_to now do
+          expect(
+            OneTimeAuthentication
+              .recent_failed_authenticate_password_count(user_key, time_ago)
+          ).to eq(0)
         end
       end
     end
@@ -124,100 +213,6 @@ describe 'OneTimeAuthentication' do
         expect(
           OneTimeAuthentication.recent(time_ago).pluck(:id)
         ).to eq([in_range.id])
-      end
-    end
-  end
-
-  describe '#tried_authenticate_password' do
-    let!(:inputed_password_one_time_authentications) {
-      [1, 5].map do |failed_count|
-        FactoryBot.create(
-          :one_time_authentication,
-          function_name: :sign_up,
-          failed_count: failed_count
-        )
-      end
-    }
-    let!(:uninputed_password_one_time_authentication) {
-      FactoryBot.create(
-        :one_time_authentication,
-        function_name: :sign_up,
-        failed_count: 0
-      )
-    }
-
-    it 'Return one_time_authentication that failed_count >= 1' do
-      expect(
-        OneTimeAuthentication
-          .tried_authenticate_password
-          .pluck(:id)
-      ).to eq([
-        inputed_password_one_time_authentications[0].id,
-        inputed_password_one_time_authentications[1].id,
-      ])
-    end
-  end
-
-  describe '#recent_failed_password' do
-    let!(:now) { Time.parse('2022-3-26 12:00') }
-    let!(:time_ago) { 3.hours }
-    let!(:unscope) {
-      [
-        {
-          authenticated_at: nil,
-          created_at: now.ago(time_ago).ago(1.second),
-          failed_count: 1
-        },
-        {
-          authenticated_at: now.ago(1.hour),
-          created_at: now.ago(time_ago),
-          failed_count: 1
-        },
-        {
-          authenticated_at: nil,
-          created_at: now.ago(time_ago),
-          failed_count: 0
-        },
-      ].map do |params|
-        FactoryBot.create(
-          :one_time_authentication,
-          function_name: :sign_up,
-          authenticated_at: params[:authenticated_at],
-          created_at: params[:created_at],
-          failed_count: params[:failed_count]
-        )
-      end
-    }
-    let!(:scope) {
-      [
-        {
-          authenticated_at: nil,
-          created_at: now.ago(time_ago),
-          failed_count: 1
-        },
-        {
-          authenticated_at: nil,
-          created_at: now,
-          failed_count: 5
-        },
-      ].map do |params|
-        FactoryBot.create(
-          :one_time_authentication,
-          function_name: :sign_up,
-          authenticated_at: params[:authenticated_at],
-          created_at: params[:created_at],
-          failed_count: params[:failed_count]
-        )
-      end
-    }
-
-    it 'Return input failed password one_time_authentications' do
-      travel_to now do
-        expect(
-          OneTimeAuthentication
-            .recent_failed_password(time_ago)
-            .pluck(:id)
-        ).to eq(scope.pluck(:id))
       end
     end
   end
