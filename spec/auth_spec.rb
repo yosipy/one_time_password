@@ -6,7 +6,7 @@ describe 'OneTimePassword::Auth' do
       function_name: OneTimePassword::FUNCTION_NAMES[:sign_up],
       version: 0,
       expires_in: 30.minutes,
-      max_count: 5,
+      max_authenticate_password_count: 5,
       password_length: 6,
       password_failed_limit: 10,
       password_failed_period: 1.hour
@@ -17,7 +17,7 @@ describe 'OneTimePassword::Auth' do
       function_name: OneTimePassword::FUNCTION_NAMES[:sign_in],
       version: 0,
       expires_in: 30.minutes,
-      max_count: 5,
+      max_authenticate_password_count: 5,
       password_length: 10,
       password_failed_limit: 10,
       password_failed_period: 1.hour
@@ -91,7 +91,7 @@ describe 'OneTimePassword::Auth' do
             user_key: user_key,
             authenticated_at: nil,
             created_at: now.ago(sign_in_context[:password_failed_period]),
-            count: 1
+            failed_count: 1
           )
         end
       }
@@ -126,7 +126,7 @@ describe 'OneTimePassword::Auth' do
             expect(one_time_authentication.user_key).to eq(user_key)
             expect(one_time_authentication.password_length).to eq(sign_in_context[:password_length])
             expect(one_time_authentication.expires_seconds).to eq(sign_in_context[:expires_in].to_i)
-            expect(one_time_authentication.max_count).to eq(sign_in_context[:max_count])
+            expect(one_time_authentication.max_authenticate_password_count).to eq(sign_in_context[:max_authenticate_password_count])
             expect(one_time_authentication.client_token).to eq('XXXXXXXXXXXXXXX')
             expect(one_time_authentication.password).to eq('0'*10)
             expect(one_time_authentication.password_confirmation).to eq('0'*10)
@@ -145,7 +145,7 @@ describe 'OneTimePassword::Auth' do
             user_key: other_user_key,
             authenticated_at: nil,
             created_at: now.ago(sign_in_context[:password_failed_period]),
-            count: 1
+            failed_count: 1
           )
         end
       }
@@ -175,7 +175,7 @@ describe 'OneTimePassword::Auth' do
             user_key: user_key,
             authenticated_at: nil,
             created_at: now.ago(sign_in_context[:password_failed_period]),
-            count: 1
+            failed_count: 1
           )
         end
       }
@@ -362,7 +362,7 @@ describe 'OneTimePassword::Auth' do
     end
   end
 
-  describe '#under_valid_count?' do
+  describe '#under_valid_failed_count?' do
     let(:function_name) { OneTimePassword::FUNCTION_NAMES[:sign_in] }
     let(:auth) do
       OneTimePassword::Auth.new(
@@ -376,34 +376,34 @@ describe 'OneTimePassword::Auth' do
         :one_time_authentication,
         function_name: :sign_in,
         user_key: user_key,
-        count: count
+        failed_count: failed_count
       )
     end
 
-    context 'count < max_count' do
-      let(:count) { 4 }
+    context 'failed_count < max_authenticate_password_count' do
+      let(:failed_count) { 4 }
 
       it 'Return true' do
         auth.find_one_time_authentication
-        expect(auth.under_valid_count?).to eq(true)
+        expect(auth.under_valid_failed_count?).to eq(true)
       end
     end
 
-    context 'count == max_count' do
-      let(:count) { 5 }
+    context 'failed_count == max_authenticate_password_count' do
+      let(:failed_count) { 5 }
 
       it 'Return true' do
         auth.find_one_time_authentication
-        expect(auth.under_valid_count?).to eq(false)
+        expect(auth.under_valid_failed_count?).to eq(false)
       end
     end
 
-    context 'count > max_count' do
-      let(:count) { 6 }
+    context 'failed_count > max_authenticate_password_count' do
+      let(:failed_count) { 6 }
 
       it 'Return true' do
         auth.find_one_time_authentication
-        expect(auth.under_valid_count?).to eq(false)
+        expect(auth.under_valid_failed_count?).to eq(false)
       end
     end
   end
@@ -487,7 +487,7 @@ describe 'OneTimePassword::Auth' do
         user_key
       )
     end
-    let(:count) { 0 }
+    let(:failed_count) { 0 }
     let(:beginning_of_validity_period) { Time.new(2022, 1, 1, 12) }
     let!(:one_time_authentication) do
       FactoryBot.create(
@@ -495,7 +495,7 @@ describe 'OneTimePassword::Auth' do
         function_name: :sign_in,
         user_key: user_key,
         password_length: sign_in_context[:password_length],
-        count: count,
+        failed_count: failed_count,
         created_at: beginning_of_validity_period
       )
     end
@@ -514,8 +514,8 @@ describe 'OneTimePassword::Auth' do
       end
 
       context 'In validity period' do
-        context 'count < max_count' do
-          let(:count) { 4 }
+        context 'failed_count < max_authenticate_password_count' do
+          let(:failed_count) { 4 }
   
           it 'Return true' do
             travel_to beginning_of_validity_period.since(30.minutes).ago(1.minute) do
@@ -524,8 +524,8 @@ describe 'OneTimePassword::Auth' do
           end
         end
   
-        context 'count == max_count' do
-          let(:count) { 5 }
+        context 'failed_count == max_authenticate_password_count' do
+          let(:failed_count) { 5 }
   
           it 'Return false' do
             travel_to beginning_of_validity_period.since(30.minutes).ago(1.minute) do
@@ -534,8 +534,8 @@ describe 'OneTimePassword::Auth' do
           end
         end
   
-        context 'count > max_count' do
-          let(:count) { 6 }
+        context 'failed_count > max_authenticate_password_count' do
+          let(:failed_count) { 6 }
   
           it 'Return false' do
             travel_to beginning_of_validity_period.since(30.minutes).ago(1.minute) do

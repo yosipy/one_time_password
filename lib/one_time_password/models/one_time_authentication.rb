@@ -14,7 +14,7 @@ module OneTimePassword
       }
 
       scope :tried_authenticate_password, -> {
-        where('count >= 1')
+        where('failed_count >= 1')
       }
 
       scope :recent_failed_password, -> (time_ago) {

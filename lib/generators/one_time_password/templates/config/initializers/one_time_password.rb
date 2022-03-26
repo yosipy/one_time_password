@@ -16,7 +16,7 @@ module OneTimePassword
   #   function_name: OneTimeAuthentication's function_name index.(Integer)
   #   version: Version each function_name.(String)
   #   expires_in: (ActiveSupport::Duration)
-  #   max_count: Number of times you can enter your password.(Integer)
+  #   max_authenticate_password_count: Number of times you can enter your password.(Integer)
   #   password_length: Password length.At 6, for example, the password would be 123456.(Integer)
   # }
   CONTEXTS = [
@@ -24,7 +24,7 @@ module OneTimePassword
       function_name: FUNCTION_NAMES[:sign_up],
       version: 0,
       expires_in: 30.minutes,
-      max_count: 5,
+      max_authenticate_password_count: 5,
       password_length: 6,
       password_failed_limit: 10,
       password_failed_period: 1.hour
@@ -33,7 +33,7 @@ module OneTimePassword
       function_name: FUNCTION_NAMES[:sign_in],
       version: 0,
       expires_in: 30.minutes,
-      max_count: 5,
+      max_authenticate_password_count: 5,
       password_length: 10,
       password_failed_limit: 10,
       password_failed_period: 1.hour
@@ -42,7 +42,7 @@ module OneTimePassword
     #   function_name: FUNCTION_NAMES[:change_email],
     #   version: 0,
     #   expires_in: 30.minutes,
-    #   max_count: 5,
+    #   max_authenticate_password_count: 5,
     #   password_length: 6
     # },
   ]

@@ -12,8 +12,8 @@ module OneTimePassword
         raise ArgumentError.new('Not found context.')
       elsif context[:expires_in].class != ActiveSupport::Duration
         raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:expires_in]')
-      elsif context[:max_count].class != Integer
-        raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:max_count]')
+      elsif context[:max_authenticate_password_count].class != Integer
+        raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:max_authenticate_password_count]')
       elsif context[:password_length].class != Integer
         raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:password_length]')
       elsif context[:password_failed_limit].class != Integer
@@ -47,7 +47,7 @@ module OneTimePassword
           user_key: @user_key,
           password_length: @context[:password_length],
           expires_seconds: @context[:expires_in].to_i,
-          max_count: @context[:max_count],
+          max_authenticate_password_count: @context[:max_authenticate_password_count],
         )
         @one_time_authentication.set_password_and_password_length(@context[:password_length])
         @one_time_authentication.save!
@@ -73,8 +73,8 @@ module OneTimePassword
       !(created_at.to_f <= Time.now.to_f && Time.now.to_f <= created_at.to_f + expires_seconds.to_f)
     end
 
-    def under_valid_count?
-      @one_time_authentication.count < @one_time_authentication.max_count
+    def under_valid_failed_count?
+      @one_time_authentication.failed_count < @one_time_authentication.max_authenticate_password_count
     end
 
     def authenticate_client_token(client_token)
@@ -94,7 +94,7 @@ module OneTimePassword
 
     def authenticate_password(password)
       result =
-        if !expired? && under_valid_count?
+        if !expired? && under_valid_failed_count?
           !!@one_time_authentication.authenticate(password)
         else
           false
@@ -104,8 +104,9 @@ module OneTimePassword
         @one_time_authentication.authenticated_at = Time.zone.now
         # Put invalid token(nil) in client_token, and return nil
         @one_time_authentication.client_token = nil
+      else
+        @one_time_authentication.failed_count += 1
       end
-      @one_time_authentication.count += 1
       @one_time_authentication.save!
 
       result

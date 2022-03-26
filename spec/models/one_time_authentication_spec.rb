@@ -130,11 +130,11 @@ describe 'OneTimeAuthentication' do
 
   describe '#tried_authenticate_password' do
     let!(:inputed_password_one_time_authentications) {
-      [1, 5].map do |count|
+      [1, 5].map do |failed_count|
         FactoryBot.create(
           :one_time_authentication,
           function_name: :sign_up,
-          count: count
+          failed_count: failed_count
         )
       end
     }
@@ -142,11 +142,11 @@ describe 'OneTimeAuthentication' do
       FactoryBot.create(
         :one_time_authentication,
         function_name: :sign_up,
-        count: 0
+        failed_count: 0
       )
     }
 
-    it 'Return one_time_authentication that count >= 1' do
+    it 'Return one_time_authentication that failed_count >= 1' do
       expect(
         OneTimeAuthentication
           .tried_authenticate_password
@@ -166,17 +166,17 @@ describe 'OneTimeAuthentication' do
         {
           authenticated_at: nil,
           created_at: now.ago(time_ago).ago(1.second),
-          count: 1
+          failed_count: 1
         },
         {
           authenticated_at: now.ago(1.hour),
           created_at: now.ago(time_ago),
-          count: 1
+          failed_count: 1
         },
         {
           authenticated_at: nil,
           created_at: now.ago(time_ago),
-          count: 0
+          failed_count: 0
         },
       ].map do |params|
         FactoryBot.create(
@@ -184,7 +184,7 @@ describe 'OneTimeAuthentication' do
           function_name: :sign_up,
           authenticated_at: params[:authenticated_at],
           created_at: params[:created_at],
-          count: params[:count]
+          failed_count: params[:failed_count]
         )
       end
     }
@@ -193,12 +193,12 @@ describe 'OneTimeAuthentication' do
         {
           authenticated_at: nil,
           created_at: now.ago(time_ago),
-          count: 1
+          failed_count: 1
         },
         {
           authenticated_at: nil,
           created_at: now,
-          count: 5
+          failed_count: 5
         },
       ].map do |params|
         FactoryBot.create(
@@ -206,7 +206,7 @@ describe 'OneTimeAuthentication' do
           function_name: :sign_up,
           authenticated_at: params[:authenticated_at],
           created_at: params[:created_at],
-          count: params[:count]
+          failed_count: params[:failed_count]
         )
       end
     }
