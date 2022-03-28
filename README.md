@@ -24,6 +24,9 @@ Or install it yourself as:
 $ gem install one_time_password
 ```
 
+## Sequence diagram
+![sequence diagram image](doc/sequence_diagram/sequencediagram.png)
+
 ## Contributing
 Contribution directions go here.
 
