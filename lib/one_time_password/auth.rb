@@ -9,32 +9,6 @@ module OneTimePassword
       @context = OneTimeAuthentication.find_context(@function_name, @version)
     end
 
-    def create_one_time_authentication
-      recent_failed_authenticate_password_count =
-        OneTimeAuthentication
-          .recent_failed_authenticate_password_count(
-            @user_key,
-            @context[:password_failed_period]
-          )
-
-      if recent_failed_authenticate_password_count <= @context[:password_failed_limit]
-        @one_time_authentication = OneTimeAuthentication.new(
-          function_name: @function_name,
-          version: @version,
-          user_key: @user_key,
-          password_length: @context[:password_length],
-          expires_seconds: @context[:expires_in].to_i,
-          max_authenticate_password_count: @context[:max_authenticate_password_count],
-        )
-        @one_time_authentication.set_password_and_password_length(@context[:password_length])
-        @one_time_authentication.save!
-      else
-        @one_time_authentication = nil
-      end
-
-      @one_time_authentication
-    end
-
     def find_one_time_authentication
       @one_time_authentication = OneTimeAuthentication
         .where(function_name: @function_name)

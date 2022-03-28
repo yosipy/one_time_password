@@ -236,6 +236,145 @@ describe 'OneTimeAuthentication' do
     end
   end
 
+  describe '#create_one_time_authentication' do
+    let!(:now) { Time.parse('2022-3-26 12:00') }
+    let(:function_name) { OneTimePassword::FUNCTION_NAMES[:sign_in] }
+
+    context 'recent_failed_authenticate_password_count <= 10 from 1 hour ago' do
+      let!(:failed_one_time_authentications) {
+        10.times.map do |index|
+          FactoryBot.create(
+            :one_time_authentication,
+            function_name: :sign_up,
+            user_key: user_key,
+            authenticated_at: nil,
+            created_at: now.ago(sign_in_context[:password_failed_period]),
+            failed_count: 1
+          )
+        end
+      }
+
+      it 'Created one_time_authentication' do
+        travel_to now do
+          expect{
+            OneTimeAuthentication.create_one_time_authentication(
+              sign_in_context,
+              user_key
+            )
+          }.to change{ OneTimeAuthentication.count }.by(1)
+        end
+      end
+
+      it 'Return created one_time_authentication' do
+        travel_to now do
+          result = OneTimeAuthentication.create_one_time_authentication(
+            sign_in_context,
+            user_key
+          )
+          expect(result.id).to eq(OneTimeAuthentication.last.id)
+        end
+      end
+
+      it 'Has one_time_authentication from context(has raw password)' do
+        aggregate_failures do
+          travel_to now do
+            # mock: To fixed password
+            allow(SecureRandom).to receive(:random_number).and_return(0)
+            # mock: To fixed client_token
+            allow(SecureRandom).to receive(:urlsafe_base64).and_return('XXXXXXXXXXXXXXX')
+
+            one_time_authentication = OneTimeAuthentication.create_one_time_authentication(
+              sign_in_context,
+              user_key
+            )
+            expect(one_time_authentication.function_name).to eq('sign_in')
+            expect(one_time_authentication.version).to eq(0)
+            expect(one_time_authentication.user_key).to eq(user_key)
+            expect(one_time_authentication.password_length).to eq(sign_in_context[:password_length])
+            expect(one_time_authentication.expires_seconds).to eq(sign_in_context[:expires_in].to_i)
+            expect(one_time_authentication.max_authenticate_password_count).to eq(sign_in_context[:max_authenticate_password_count])
+            expect(one_time_authentication.client_token).to eq('XXXXXXXXXXXXXXX')
+            expect(one_time_authentication.password).to eq('0'*10)
+            expect(one_time_authentication.password_confirmation).to eq('0'*10)
+          end
+        end
+      end
+    end
+
+    context "Other user's recent_failed_authenticate_password_count > 10 from 1 hour ago" do
+      let(:other_user_key) { 'other_user@example.com' }
+      let!(:failed_one_time_authentications) {
+        11.times.map do |index|
+          FactoryBot.create(
+            :one_time_authentication,
+            function_name: :sign_up,
+            user_key: other_user_key,
+            authenticated_at: nil,
+            created_at: now.ago(sign_in_context[:password_failed_period]),
+            failed_count: 1
+          )
+        end
+      }
+
+      it 'Created one_time_authentication' do
+        travel_to now do
+          expect{
+            OneTimeAuthentication.create_one_time_authentication(
+              sign_in_context,
+              user_key
+            )
+          }.to change{ OneTimeAuthentication.count }.by(1)
+        end
+      end
+
+      it 'Return created one_time_authentication' do
+        travel_to now do
+          result = OneTimeAuthentication.create_one_time_authentication(
+            sign_in_context,
+            user_key
+          )
+          expect(result.id).to eq(OneTimeAuthentication.last.id)
+        end
+      end
+    end
+
+    context 'recent_failed_authenticate_password_count > 10 from 1 hour ago' do
+      let!(:failed_one_time_authentications) {
+        11.times.map do |index|
+          FactoryBot.create(
+            :one_time_authentication,
+            function_name: :sign_up,
+            user_key: user_key,
+            authenticated_at: nil,
+            created_at: now.ago(sign_in_context[:password_failed_period]),
+            failed_count: 1
+          )
+        end
+      }
+
+      it 'Not created one_time_authentication' do
+        travel_to now do
+          expect{
+            OneTimeAuthentication.create_one_time_authentication(
+              sign_in_context,
+              user_key
+            )
+          }.to change{ OneTimeAuthentication.count }.by(0)
+        end
+      end
+
+      it 'Return nil' do
+        travel_to now do
+          result = OneTimeAuthentication.create_one_time_authentication(
+            sign_in_context,
+            user_key
+          )
+          expect(result).to eq(nil)
+        end
+      end
+    end
+  end
+
   describe '#set_client_token' do
     let(:one_time_authentication) { OneTimeAuthentication.new }
 
