@@ -1,7 +1,36 @@
 require "rails_helper"
 
 describe 'OneTimeAuthentication' do
+  let(:sign_up_context) do
+    {
+      function_name: OneTimePassword::FUNCTION_NAMES[:sign_up],
+      version: 0,
+      expires_in: 30.minutes,
+      max_authenticate_password_count: 5,
+      password_length: 6,
+      password_failed_limit: 10,
+      password_failed_period: 1.hour
+    }
+  end
+  let(:sign_in_context) do
+    {
+      function_name: OneTimePassword::FUNCTION_NAMES[:sign_in],
+      version: 0,
+      expires_in: 30.minutes,
+      max_authenticate_password_count: 5,
+      password_length: 10,
+      password_failed_limit: 10,
+      password_failed_period: 1.hour
+    }
+  end
   let(:user_key) { 'user@example.com' }
+
+  before do
+    OneTimePassword::CONTEXTS = [
+      sign_up_context,
+      sign_in_context,
+    ]
+  end
 
   describe '#unauthenticated' do
     let!(:authenticated_one_time_authentication) {
@@ -164,6 +193,44 @@ describe 'OneTimeAuthentication' do
             OneTimeAuthentication
               .recent_failed_authenticate_password_count(user_key, time_ago)
           ).to eq(0)
+        end
+      end
+    end
+  end
+
+  describe '#self.find_context' do
+    context 'Exist function_name' do
+      let(:function_name) { OneTimePassword::FUNCTION_NAMES[:sign_up] }
+
+      context 'Exist version' do
+        it 'Return selected context' do
+          expect(OneTimeAuthentication.find_context(function_name, 0))
+            .to eq(sign_up_context)
+        end
+      end
+
+      context 'Not exist version' do
+        it 'Raise error' do
+          expect{ OneTimeAuthentication.find_context(function_name, 1) }
+            .to raise_error(ArgumentError, 'Not found context.')
+        end
+      end
+    end
+
+    context 'Not exist function_name' do
+      let(:function_name) { OneTimePassword::FUNCTION_NAMES[:change_email] }
+
+      context 'exist version' do
+        it 'Raise error' do
+          expect{ OneTimeAuthentication.find_context(function_name, 0) }
+            .to raise_error(ArgumentError, 'Not found context.')
+        end
+      end
+
+      context 'Not exist version' do
+        it 'Raise error' do
+          expect{ OneTimeAuthentication.find_context(function_name, 1) }
+           .to raise_error(ArgumentError, 'Not found context.')
         end
       end
     end

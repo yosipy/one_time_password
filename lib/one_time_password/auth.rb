@@ -1,37 +1,12 @@
 module OneTimePassword
   class Auth
-    def self.find_context(function_name, version)
-      context = OneTimePassword::CONTEXTS
-        .select{ |context|
-          context[:function_name] == function_name &&
-            context[:version] == version
-        }
-        .first
-
-      if context.nil?
-        raise ArgumentError.new('Not found context.')
-      elsif context[:expires_in].class != ActiveSupport::Duration
-        raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:expires_in]')
-      elsif context[:max_authenticate_password_count].class != Integer
-        raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:max_authenticate_password_count]')
-      elsif context[:password_length].class != Integer
-        raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:password_length]')
-      elsif context[:password_failed_limit].class != Integer
-        raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:password_failed_limit]')
-      elsif context[:password_failed_period].class != ActiveSupport::Duration
-        raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:password_failed_period]')
-      end
-
-      context
-    end
-
     def initialize(
       function_name, version, user_key
     )
       @function_name = function_name
       @version = version
       @user_key = user_key
-      @context = self.class.find_context(@function_name, @version)
+      @context = OneTimeAuthentication.find_context(@function_name, @version)
     end
 
     def create_one_time_authentication

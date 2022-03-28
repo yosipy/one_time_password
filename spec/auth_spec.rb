@@ -32,44 +32,6 @@ describe 'OneTimePassword::Auth' do
     ]
   end
 
-  describe '#self.find_context' do
-    context 'Exist function_name' do
-      let(:function_name) { OneTimePassword::FUNCTION_NAMES[:sign_up] }
-
-      context 'Exist version' do
-        it 'Return selected context' do
-          expect(OneTimePassword::Auth.find_context(function_name, 0))
-            .to eq(sign_up_context)
-        end
-      end
-
-      context 'Not exist version' do
-        it 'Raise error' do
-          expect{ OneTimePassword::Auth.find_context(function_name, 1) }
-            .to raise_error(ArgumentError, 'Not found context.')
-        end
-      end
-    end
-
-    context 'Not exist function_name' do
-      let(:function_name) { OneTimePassword::FUNCTION_NAMES[:change_email] }
-
-      context 'exist version' do
-        it 'Raise error' do
-          expect{ OneTimePassword::Auth.find_context(function_name, 0) }
-            .to raise_error(ArgumentError, 'Not found context.')
-        end
-      end
-
-      context 'Not exist version' do
-        it 'Raise error' do
-          expect{ OneTimePassword::Auth.find_context(function_name, 1) }
-           .to raise_error(ArgumentError, 'Not found context.')
-        end
-      end
-    end
-  end
-
   describe '#create_one_time_authentication' do
     let!(:now) { Time.parse('2022-3-26 12:00') }
     let(:function_name) { OneTimePassword::FUNCTION_NAMES[:sign_in] }
