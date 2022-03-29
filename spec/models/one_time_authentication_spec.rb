@@ -569,7 +569,7 @@ describe 'OneTimeAuthentication' do
       it 'Return regenerate client_token, and update client_token' do
         aggregate_failures do
           expect(
-            one_time_authentication.authenticate_client_token('XXXXXXXXXXXXXXX')
+            one_time_authentication.authenticate_one_time_client_token('XXXXXXXXXXXXXXX')
           ).to eq('YYYYYYYYYYYYYYY')
           expect(one_time_authentication.reload.client_token).to eq('YYYYYYYYYYYYYYY')
         end
@@ -580,7 +580,7 @@ describe 'OneTimeAuthentication' do
       it 'Return nil, and client_token is nil' do
         aggregate_failures do
           expect(
-            one_time_authentication.authenticate_client_token('ZZZZZZZZZZZZZZZ')
+            one_time_authentication.authenticate_one_time_client_token('ZZZZZZZZZZZZZZZ')
           ).to eq(nil)
           expect(one_time_authentication.reload.client_token).to eq(nil)
         end
@@ -594,7 +594,7 @@ describe 'OneTimeAuthentication' do
       it 'Return nil, and client_token is nil' do
         aggregate_failures do
           expect(
-            one_time_authentication.authenticate_client_token(nil)
+            one_time_authentication.authenticate_one_time_client_token(nil)
         ).to eq(nil)
           expect(one_time_authentication.reload.client_token).to eq(nil)
         end
@@ -609,7 +609,7 @@ describe 'OneTimeAuthentication' do
       it 'Return nil, and client_token is nil' do
         aggregate_failures do
           expect(
-            one_time_authentication.authenticate_client_token('')
+            one_time_authentication.authenticate_one_time_client_token('')
           ).to eq(nil)
           expect(one_time_authentication.reload.client_token).to eq(nil)
         end
