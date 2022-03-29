@@ -97,7 +97,7 @@ module OneTimePassword
       self.failed_count < self.max_authenticate_password_count
     end
 
-    def authenticate_one_time_client_token(client_token)
+    def authenticate_one_time_client_token!(client_token)
       if (self.client_token.present? &&
         self.client_token == client_token)
         # Refresh client_token, and return this token
@@ -112,7 +112,7 @@ module OneTimePassword
       end
     end
 
-    def authenticate_one_time_password(password)
+    def authenticate_one_time_password!(password)
       result =
         if !self.expired? && self.under_valid_failed_count?
           !!self.authenticate(password)
