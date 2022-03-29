@@ -114,6 +114,26 @@ module OneTimePassword
       end
     end
 
+    def authenticate_password(password)
+      result =
+        if !self.expired? && self.under_valid_failed_count?
+          !!self.authenticate(password)
+        else
+          false
+        end
+
+      if result
+        self.authenticated_at = Time.zone.now
+        # Put invalid token(nil) in client_token, and return nil
+        self.client_token = nil
+      else
+        self.failed_count += 1
+      end
+      self.save!
+
+      result
+    end
+
     def set_client_token
       self.client_token = SecureRandom.urlsafe_base64
     end
