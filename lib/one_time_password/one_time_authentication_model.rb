@@ -60,7 +60,24 @@ module OneTimePassword
         one_time_authentication
       end
 
+      def generate_random_password(length=6)
+        length.times.map{ SecureRandom.random_number(10) }.join
+      end
 
+      def recent_failed_authenticate_password_count(user_key, time_ago)
+        OneTimeAuthentication
+          .where(user_key: user_key)
+          .recent(time_ago)
+          .sum(:failed_count)
+      end
+    end
+
+    def set_client_token
+      self.client_token = SecureRandom.urlsafe_base64
+    end
+
+    def set_password_and_password_length(length=6)
+      self.password = self.password_confirmation = OneTimeAuthentication.generate_random_password(length)
     end
   end
 end
