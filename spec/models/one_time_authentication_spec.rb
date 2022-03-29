@@ -473,7 +473,7 @@ describe 'OneTimeAuthentication' do
       )
     end
 
-    context 'Time.now is before beginning of validity period' do
+    context 'Time.zone.now is before beginning of validity period' do
       it 'Return true' do
         travel_to beginning_of_validity_period.ago(1.minute) do
           expect(one_time_authentication.expired?).to eq(true)
@@ -481,7 +481,7 @@ describe 'OneTimeAuthentication' do
       end
     end
 
-    context 'Time.now is after beginning of validity period' do
+    context 'Time.zone.now is after beginning of validity period' do
       it 'Return false' do
         travel_to beginning_of_validity_period do
           expect(one_time_authentication.expired?).to eq(false)
@@ -489,7 +489,7 @@ describe 'OneTimeAuthentication' do
       end
     end
 
-    context 'Time.now is before end of validity period' do
+    context 'Time.zone.now is before end of validity period' do
       it 'Return false' do
         travel_to beginning_of_validity_period.since(30.minutes).ago(1.minute) do
           expect(one_time_authentication.expired?).to eq(false)
@@ -497,7 +497,7 @@ describe 'OneTimeAuthentication' do
       end
     end
 
-    context 'Time.now is before end of validity period' do
+    context 'Time.zone.now is before end of validity period' do
       it 'Return true' do
         travel_to beginning_of_validity_period.since(30.minutes).since(1.second) do
           expect(one_time_authentication.expired?).to eq(true)

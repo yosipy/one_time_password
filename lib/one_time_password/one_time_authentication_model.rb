@@ -89,8 +89,8 @@ module OneTimePassword
     end
 
     def expired?
-      !(self.created_at.to_f <= Time.now.to_f &&
-        Time.now.to_f <= self.created_at.to_f + self.expires_seconds.to_f)
+      !(self.created_at.to_f <= Time.zone.now.to_f &&
+        Time.zone.now.to_f <= self.created_at.to_f + self.expires_seconds.to_f)
     end
 
     def under_valid_failed_count?
