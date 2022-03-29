@@ -32,63 +32,6 @@ describe 'OneTimePassword::Auth' do
     ]
   end
 
-  describe '#expired?' do
-    let(:function_name) { OneTimePassword::FUNCTION_NAMES[:sign_in] }
-    let(:auth) do
-      OneTimePassword::Auth.new(
-        function_name,
-        0,
-        user_key
-      )
-    end
-
-    let(:beginning_of_validity_period) { Time.new(2022, 1, 1, 12) }
-    let!(:one_time_authentication) do
-      FactoryBot.create(
-        :one_time_authentication,
-        function_name: :sign_in,
-        user_key: user_key,
-        created_at: beginning_of_validity_period
-      )
-    end
-
-    context 'Time.now is before beginning of validity period' do
-      it 'Return true' do
-        travel_to beginning_of_validity_period.ago(1.minute) do
-          auth.find_one_time_authentication
-          expect(auth.expired?).to eq(true)
-        end
-      end
-    end
-
-    context 'Time.now is after beginning of validity period' do
-      it 'Return false' do
-        travel_to beginning_of_validity_period do
-          auth.find_one_time_authentication
-          expect(auth.expired?).to eq(false)
-        end
-      end
-    end
-
-    context 'Time.now is before end of validity period' do
-      it 'Return false' do
-        travel_to beginning_of_validity_period.since(30.minutes).ago(1.minute) do
-          auth.find_one_time_authentication
-          expect(auth.expired?).to eq(false)
-        end
-      end
-    end
-
-    context 'Time.now is before end of validity period' do
-      it 'Return true' do
-        travel_to beginning_of_validity_period.since(30.minutes).since(1.second) do
-          auth.find_one_time_authentication
-          expect(auth.expired?).to eq(true)
-        end
-      end
-    end
-  end
-
   describe '#under_valid_failed_count?' do
     let(:function_name) { OneTimePassword::FUNCTION_NAMES[:sign_in] }
     let(:auth) do

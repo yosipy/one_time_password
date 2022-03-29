@@ -9,13 +9,6 @@ module OneTimePassword
       @context = OneTimeAuthentication.find_context(@function_name, @version)
     end
 
-    def expired?
-      expires_seconds = @one_time_authentication.expires_seconds
-      created_at = @one_time_authentication.created_at
-
-      !(created_at.to_f <= Time.now.to_f && Time.now.to_f <= created_at.to_f + expires_seconds.to_f)
-    end
-
     def under_valid_failed_count?
       @one_time_authentication.failed_count < @one_time_authentication.max_authenticate_password_count
     end
