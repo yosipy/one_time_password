@@ -2,6 +2,12 @@ module OneTimePassword
   module OneTimeAuthenticationModel
     extend ActiveSupport::Concern
 
+    included do
+      before_create :set_client_token
+
+      has_secure_password
+    end
+
     module ClassMethods
       def find_context(function_name, version)
         context = OneTimePassword::CONTEXTS
@@ -53,6 +59,8 @@ module OneTimePassword
 
         one_time_authentication
       end
+
+
     end
   end
 end

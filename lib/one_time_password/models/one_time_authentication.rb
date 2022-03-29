@@ -1,10 +1,6 @@
 module OneTimePassword
   module Models
     class OneTimeAuthentication < ActiveRecord::Base
-      before_create :set_client_token
-
-      has_secure_password
-
       scope :unauthenticated, -> {
         where(authenticated_at: nil)
       }
