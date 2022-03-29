@@ -68,6 +68,14 @@ module OneTimePassword
         one_time_authentication
       end
 
+      def find_one_time_authentication(context, user_key)
+        OneTimeAuthentication
+          .where(function_name: context[:function_name])
+          .where(version: context[:version])
+          .where(user_key: user_key)
+          .last
+      end
+
       def generate_random_password(length=6)
         length.times.map{ SecureRandom.random_number(10) }.join
       end

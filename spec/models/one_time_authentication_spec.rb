@@ -236,7 +236,7 @@ describe 'OneTimeAuthentication' do
     end
   end
 
-  describe '#create_one_time_authentication' do
+  describe '#self.create_one_time_authentication' do
     let!(:now) { Time.parse('2022-3-26 12:00') }
     let(:function_name) { OneTimePassword::FUNCTION_NAMES[:sign_in] }
 
@@ -371,6 +371,91 @@ describe 'OneTimeAuthentication' do
           )
           expect(result).to eq(nil)
         end
+      end
+    end
+  end
+
+  describe '#self.find_one_time_authentication' do
+    let(:function_name) { OneTimePassword::FUNCTION_NAMES[:sign_in] }
+
+    context 'There is a match function_name, version and user_key in the table' do
+      let!(:one_time_authentications) do
+        3.times.map do |num|
+          FactoryBot.create(
+            :one_time_authentication,
+            function_name: :sign_in,
+            user_key: user_key
+          )
+        end
+      end
+  
+      it 'Return last one_time_authentication in match function_name, version and user_key' do
+        expect(
+          OneTimeAuthentication.find_one_time_authentication(sign_in_context, user_key).id
+        ).to eq(one_time_authentications.last.id)
+      end
+
+      it 'Password and password_confirmation is nil, because hashing password in password_digest' do
+        one_time_authentication = OneTimeAuthentication.find_one_time_authentication(sign_in_context, user_key)
+        aggregate_failures do
+          expect(one_time_authentication.password).to eq(nil)
+          expect(one_time_authentication.password_confirmation).to eq(nil)
+        end
+      end
+    end
+
+    context 'There is not a match function_name in the table' do
+      let!(:one_time_authentications) do
+        3.times.map do |num|
+          FactoryBot.create(
+            :one_time_authentication,
+            function_name: :sign_up,
+            user_key: user_key
+          )
+        end
+      end
+  
+      it 'Return nil' do
+        expect(
+          OneTimeAuthentication.find_one_time_authentication(sign_in_context, user_key)
+        ).to eq(nil)
+      end
+    end
+
+    context 'There is not a match version in the table' do
+      let!(:one_time_authentications) do
+        3.times.map do |num|
+          FactoryBot.create(
+            :one_time_authentication,
+            function_name: :sign_in,
+            version: 1,
+            user_key: user_key
+          )
+        end
+      end
+  
+      it 'Return nil' do
+        expect(
+          OneTimeAuthentication.find_one_time_authentication(sign_in_context, user_key)
+        ).to eq(nil)
+      end
+    end
+
+    context 'There is not a match user_key in the table' do
+      let!(:one_time_authentications) do
+        3.times.map do |num|
+          FactoryBot.create(
+            :one_time_authentication,
+            function_name: :sign_in,
+            user_key: 'other_user@example.com'
+          )
+        end
+      end
+  
+      it 'Return nil' do
+        expect(
+          OneTimeAuthentication.find_one_time_authentication(sign_in_context, user_key)
+        ).to eq(nil)
       end
     end
   end

@@ -9,14 +9,6 @@ module OneTimePassword
       @context = OneTimeAuthentication.find_context(@function_name, @version)
     end
 
-    def find_one_time_authentication
-      @one_time_authentication = OneTimeAuthentication
-        .where(function_name: @function_name)
-        .where(version: @version)
-        .where(user_key: @user_key)
-        .last
-    end
-
     def expired?
       expires_seconds = @one_time_authentication.expires_seconds
       created_at = @one_time_authentication.created_at
