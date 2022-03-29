@@ -9,21 +9,6 @@ module OneTimePassword
       @context = OneTimeAuthentication.find_context(@function_name, @version)
     end
 
-    def authenticate_client_token(client_token)
-      if (@one_time_authentication.client_token.present? &&
-          @one_time_authentication.client_token == client_token)
-        # Refresh client_token, and return this token
-        new_client_token = @one_time_authentication.set_client_token
-        @one_time_authentication.save!
-        new_client_token
-      else
-        # Put invalid token(nil) in client_token, and return nil
-        @one_time_authentication.client_token = nil
-        @one_time_authentication.save!
-        nil
-      end
-    end
-
     def authenticate_password(password)
       result =
         if !expired? && under_valid_failed_count?

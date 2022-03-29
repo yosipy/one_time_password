@@ -99,6 +99,21 @@ module OneTimePassword
       self.failed_count < self.max_authenticate_password_count
     end
 
+    def authenticate_client_token(client_token)
+      if (self.client_token.present? &&
+        self.client_token == client_token)
+        # Refresh client_token, and return this token
+        new_client_token = self.set_client_token
+        self.save!
+        new_client_token
+      else
+        # Put invalid token(nil) in client_token, and return nil
+        self.client_token = nil
+        self.save!
+        nil
+      end
+    end
+
     def set_client_token
       self.client_token = SecureRandom.urlsafe_base64
     end

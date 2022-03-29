@@ -548,6 +548,75 @@ describe 'OneTimeAuthentication' do
     end
   end
 
+  describe '#authenticate_client_token' do
+    let(:function_name) { OneTimePassword::FUNCTION_NAMES[:sign_in] }
+    let!(:one_time_authentication) do
+      # First client_token
+      allow(SecureRandom).to receive(:urlsafe_base64).and_return('XXXXXXXXXXXXXXX')
+      FactoryBot.create(
+        :one_time_authentication,
+        function_name: :sign_in,
+        user_key: user_key
+      )
+    end
+
+    before do
+      # mock: for second client_token
+      allow(SecureRandom).to receive(:urlsafe_base64).and_return('YYYYYYYYYYYYYYY')
+    end
+
+    context 'Argment is correct client_token' do
+      it 'Return regenerate client_token, and update client_token' do
+        aggregate_failures do
+          expect(
+            one_time_authentication.authenticate_client_token('XXXXXXXXXXXXXXX')
+          ).to eq('YYYYYYYYYYYYYYY')
+          expect(one_time_authentication.reload.client_token).to eq('YYYYYYYYYYYYYYY')
+        end
+      end
+    end
+
+    context 'Argment is incorrect client_token' do
+      it 'Return nil, and client_token is nil' do
+        aggregate_failures do
+          expect(
+            one_time_authentication.authenticate_client_token('ZZZZZZZZZZZZZZZ')
+          ).to eq(nil)
+          expect(one_time_authentication.reload.client_token).to eq(nil)
+        end
+      end
+    end
+
+    context 'Argment is nil, and one_time_authentication.client_token is nil' do
+      before do
+        one_time_authentication.update(client_token: nil)
+      end
+      it 'Return nil, and client_token is nil' do
+        aggregate_failures do
+          expect(
+            one_time_authentication.authenticate_client_token(nil)
+        ).to eq(nil)
+          expect(one_time_authentication.reload.client_token).to eq(nil)
+        end
+      end
+    end
+
+    context 'Argment is empty, and one_time_authentication.client_token is empty' do
+      before do
+        one_time_authentication.update(client_token: '')
+      end
+
+      it 'Return nil, and client_token is nil' do
+        aggregate_failures do
+          expect(
+            one_time_authentication.authenticate_client_token('')
+          ).to eq(nil)
+          expect(one_time_authentication.reload.client_token).to eq(nil)
+        end
+      end
+    end
+  end
+
   describe '#set_client_token' do
     let(:one_time_authentication) { OneTimeAuthentication.new }
 
