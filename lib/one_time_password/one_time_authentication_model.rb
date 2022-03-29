@@ -68,6 +68,14 @@ module OneTimePassword
         one_time_authentication
       end
 
+      def find_one_time_authentication(context, user_key)
+        OneTimeAuthentication
+          .where(function_name: context[:function_name])
+          .where(version: context[:version])
+          .where(user_key: user_key)
+          .last
+      end
+
       def generate_random_password(length=6)
         length.times.map{ SecureRandom.random_number(10) }.join
       end
@@ -78,6 +86,50 @@ module OneTimePassword
           .recent(time_ago)
           .sum(:failed_count)
       end
+    end
+
+    def expired?
+      !(self.created_at.to_f <= Time.zone.now.to_f &&
+        Time.zone.now.to_f <= self.created_at.to_f + self.expires_seconds.to_f)
+    end
+
+    def under_valid_failed_count?
+      self.failed_count < self.max_authenticate_password_count
+    end
+
+    def authenticate_one_time_client_token!(client_token)
+      if (self.client_token.present? &&
+        self.client_token == client_token)
+        # Refresh client_token, and return this token
+        new_client_token = self.set_client_token
+        self.save!
+        new_client_token
+      else
+        # Put invalid token(nil) in client_token, and return nil
+        self.client_token = nil
+        self.save!
+        nil
+      end
+    end
+
+    def authenticate_one_time_password!(password)
+      result =
+        if !self.expired? && self.under_valid_failed_count?
+          !!self.authenticate(password)
+        else
+          false
+        end
+
+      if result
+        self.authenticated_at = Time.zone.now
+        # Put invalid token(nil) in client_token, and return nil
+        self.client_token = nil
+      else
+        self.failed_count += 1
+      end
+      self.save!
+
+      result
     end
 
     def set_client_token
