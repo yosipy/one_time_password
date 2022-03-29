@@ -6,6 +6,14 @@ module OneTimePassword
       before_create :set_client_token
 
       has_secure_password
+
+      scope :unauthenticated, -> {
+        where(authenticated_at: nil)
+      }
+
+      scope :recent, -> (time_ago) {
+        where(created_at: Time.zone.now.ago(time_ago)...)
+      }
     end
 
     module ClassMethods
