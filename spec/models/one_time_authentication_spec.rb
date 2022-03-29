@@ -637,7 +637,7 @@ describe 'OneTimeAuthentication' do
         it 'Return false' do
           travel_to beginning_of_validity_period.since(30.minutes).since(1.second) do
             expect(
-              one_time_authentication.authenticate_password('0'*10)
+              one_time_authentication.authenticate_one_time_password('0'*10)
             ).to eq(false)
           end
         end
@@ -650,7 +650,7 @@ describe 'OneTimeAuthentication' do
           it 'Return true' do
             travel_to beginning_of_validity_period.since(30.minutes).ago(1.minute) do
               expect(
-                one_time_authentication.authenticate_password('0'*10)
+                one_time_authentication.authenticate_one_time_password('0'*10)
               ).to eq(true)
             end
           end
@@ -662,7 +662,7 @@ describe 'OneTimeAuthentication' do
           it 'Return false' do
             travel_to beginning_of_validity_period.since(30.minutes).ago(1.minute) do
               expect(
-                one_time_authentication.authenticate_password('0'*10)
+                one_time_authentication.authenticate_one_time_password('0'*10)
               ).to eq(false)
             end
           end
@@ -674,7 +674,7 @@ describe 'OneTimeAuthentication' do
           it 'Return false' do
             travel_to beginning_of_validity_period.since(30.minutes).ago(1.minute) do
               expect(
-                one_time_authentication.authenticate_password('0'*10)
+                one_time_authentication.authenticate_one_time_password('0'*10)
               ).to eq(false)
             end
           end
@@ -687,7 +687,7 @@ describe 'OneTimeAuthentication' do
         it 'Return false' do
           travel_to beginning_of_validity_period.since(30.minutes).since(1.second) do
             expect(
-              one_time_authentication.authenticate_password('0'*10)
+              one_time_authentication.authenticate_one_time_password('0'*10)
             ).to eq(false)
           end
         end
@@ -697,7 +697,7 @@ describe 'OneTimeAuthentication' do
         it 'Return false' do
           travel_to beginning_of_validity_period.since(30.minutes).ago(1.minute) do
             expect(
-              one_time_authentication.authenticate_password('9'*10)
+              one_time_authentication.authenticate_one_time_password('9'*10)
             ).to eq(false)
           end
         end

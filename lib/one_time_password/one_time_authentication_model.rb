@@ -114,7 +114,7 @@ module OneTimePassword
       end
     end
 
-    def authenticate_password(password)
+    def authenticate_one_time_password(password)
       result =
         if !self.expired? && self.under_valid_failed_count?
           !!self.authenticate(password)
