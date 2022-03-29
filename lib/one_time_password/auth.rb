@@ -9,10 +9,6 @@ module OneTimePassword
       @context = OneTimeAuthentication.find_context(@function_name, @version)
     end
 
-    def under_valid_failed_count?
-      @one_time_authentication.failed_count < @one_time_authentication.max_authenticate_password_count
-    end
-
     def authenticate_client_token(client_token)
       if (@one_time_authentication.client_token.present? &&
           @one_time_authentication.client_token == client_token)

@@ -95,6 +95,10 @@ module OneTimePassword
       !(created_at.to_f <= Time.now.to_f && Time.now.to_f <= created_at.to_f + expires_seconds.to_f)
     end
 
+    def under_valid_failed_count?
+      self.failed_count < self.max_authenticate_password_count
+    end
+
     def set_client_token
       self.client_token = SecureRandom.urlsafe_base64
     end

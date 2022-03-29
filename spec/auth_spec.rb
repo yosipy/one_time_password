@@ -32,52 +32,6 @@ describe 'OneTimePassword::Auth' do
     ]
   end
 
-  describe '#under_valid_failed_count?' do
-    let(:function_name) { OneTimePassword::FUNCTION_NAMES[:sign_in] }
-    let(:auth) do
-      OneTimePassword::Auth.new(
-        function_name,
-        0,
-        user_key
-      )
-    end
-    let!(:one_time_authentication) do
-      FactoryBot.create(
-        :one_time_authentication,
-        function_name: :sign_in,
-        user_key: user_key,
-        failed_count: failed_count
-      )
-    end
-
-    context 'failed_count < max_authenticate_password_count' do
-      let(:failed_count) { 4 }
-
-      it 'Return true' do
-        auth.find_one_time_authentication
-        expect(auth.under_valid_failed_count?).to eq(true)
-      end
-    end
-
-    context 'failed_count == max_authenticate_password_count' do
-      let(:failed_count) { 5 }
-
-      it 'Return true' do
-        auth.find_one_time_authentication
-        expect(auth.under_valid_failed_count?).to eq(false)
-      end
-    end
-
-    context 'failed_count > max_authenticate_password_count' do
-      let(:failed_count) { 6 }
-
-      it 'Return true' do
-        auth.find_one_time_authentication
-        expect(auth.under_valid_failed_count?).to eq(false)
-      end
-    end
-  end
-
   describe '#authenticate_client_token' do
     let(:function_name) { OneTimePassword::FUNCTION_NAMES[:sign_in] }
     let(:auth) do
