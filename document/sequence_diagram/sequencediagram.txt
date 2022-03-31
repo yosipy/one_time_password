@@ -1,23 +1,25 @@
 # https://sequencediagram.org/
 
 
-title  Sequence diagram with OneTimePassword
+title  Signup exsample equence diagram with OneTimePassword
 
-participant Client mailer
-participant Client
+participant User mailer
+participant User
+participant Frontend
 participant Server
 
 
-Client->Server:Request by one-time password.\nPost email address (to be used as user_key)
+User->Frontend:input email and password
+Frontend->Server:Request one-time password.\nPost email(to be used as user_key)
 
 Server->Server:Generate one-time-password
-Client mailer<-Server:Send one-time-password
+User mailer<-Server:Send one-time-password
 
 loop Failed authenticate_password && failed_count < max_authenticate_password_count
   Server->Server:Generate one-time-client-token
-  Client<-Server:Send one-time-client-token
-  Client mailer->Client:User input one-time-password
-  Client->Server:Post one-time-password & one-time-client-token
+  Frontend<-Server:Send one-time-client-token
+  User mailer->Frontend:User input one-time-password
+  Frontend->Server:Post one-time-password &\n  one-time-client-token &\n  email & password
   Server->Server:Authenticate\none-time-password & one-time-client-token\n(Authentication one-time-password always fails\nif the one-time-client-token is incorrect.)
   alt Failed: Authenticate one-time-password
     Server->Server:failed_count\+\+
@@ -26,9 +28,9 @@ end
 
 
 alt Success: Authenticate one-time-password
-Server->Server:Execute the process in case of success
-  Client<-Server:notice success
+Server->Server:Execute the process in case of success: sign up!
+  Frontend<-Server:notice success
 else failed_count >= max_authenticate_password_count
 Server->Server:Execute the process in case of failed
-  Client<-Server:notice failed
+  Frontend<-Server:notice failed
 end
