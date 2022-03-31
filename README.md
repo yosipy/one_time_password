@@ -33,8 +33,8 @@ Sequence diagram.
 ![sequence diagram image](document/sequence_diagram/sequencediagram.png)
 
 
-## Contributing
-Contribution directions go here.
+<!-- ## Contributing
+Contribution directions go here. -->
 
 
 ## License
