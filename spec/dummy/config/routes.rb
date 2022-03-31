@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Defines the root path route ("/")
-  # root "articles#index"
+  post 'test_user/sign_up_one_time_auth', to: 'test_users#create_one_time_auth'
+  post 'test_user/sign_up', to: 'test_users#create'
 end
