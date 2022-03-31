@@ -7,8 +7,7 @@ class TestUsersController < ApplicationController
     end
 
     context = OneTimeAuthentication.find_context(
-      OneTimePassword::FUNCTION_NAMES[:sign_up],
-      0
+      OneTimePassword::FUNCTION_NAMES[:sign_up]
     )
     one_time_authentication = OneTimeAuthentication.create_one_time_authentication(
       context,
@@ -37,8 +36,7 @@ class TestUsersController < ApplicationController
     end
 
     context = OneTimeAuthentication.find_context(
-      OneTimePassword::FUNCTION_NAMES[:sign_up],
-      0
+      OneTimePassword::FUNCTION_NAMES[:sign_up]
     )
     one_time_authentication = OneTimeAuthentication.find_one_time_authentication(
       context,

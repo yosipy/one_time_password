@@ -17,7 +17,7 @@ module OneTimePassword
     end
 
     module ClassMethods
-      def find_context(function_name, version)
+      def find_context(function_name, version: 0)
         context = OneTimePassword::CONTEXTS
           .select{ |context|
             context[:function_name] == function_name &&

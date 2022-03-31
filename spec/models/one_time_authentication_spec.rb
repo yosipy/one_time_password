@@ -204,14 +204,14 @@ describe 'OneTimeAuthentication' do
 
       context 'Exist version' do
         it 'Return selected context' do
-          expect(OneTimeAuthentication.find_context(function_name, 0))
+          expect(OneTimeAuthentication.find_context(function_name))
             .to eq(sign_up_context)
         end
       end
 
       context 'Not exist version' do
         it 'Raise error' do
-          expect{ OneTimeAuthentication.find_context(function_name, 1) }
+          expect{ OneTimeAuthentication.find_context(function_name, version: 1) }
             .to raise_error(ArgumentError, 'Not found context.')
         end
       end
@@ -222,14 +222,14 @@ describe 'OneTimeAuthentication' do
 
       context 'exist version' do
         it 'Raise error' do
-          expect{ OneTimeAuthentication.find_context(function_name, 0) }
+          expect{ OneTimeAuthentication.find_context(function_name) }
             .to raise_error(ArgumentError, 'Not found context.')
         end
       end
 
       context 'Not exist version' do
         it 'Raise error' do
-          expect{ OneTimeAuthentication.find_context(function_name, 1) }
+          expect{ OneTimeAuthentication.find_context(function_name, version: 1) }
            .to raise_error(ArgumentError, 'Not found context.')
         end
       end
