@@ -5,7 +5,10 @@ __* This Gem is still incomplete.__
 Short description and motivation.
 
 ## Usage
-How to use my plugin.
+```ruby
+
+
+```
 
 ## Installation
 Add this line to your application's Gemfile:
@@ -23,6 +26,9 @@ Or install it yourself as:
 ```bash
 $ gem install one_time_password
 ```
+
+## Sequence diagram
+![sequence diagram image](document/sequence_diagram/sequencediagram.png)
 
 ## Contributing
 Contribution directions go here.
