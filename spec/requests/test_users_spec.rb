@@ -110,6 +110,7 @@ RSpec.describe "TestUsers", type: :request do
       end
 
       it 'Return client_token' do
+        subject
         expect(JSON.parse(response.body)['client_token']).not_to be_nil
       end
     end
