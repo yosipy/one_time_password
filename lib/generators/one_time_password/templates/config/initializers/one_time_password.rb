@@ -4,8 +4,10 @@ module OneTimePassword
   # using function_name in OneTimeAuthentication Model.
   # ```
   # # app/models/one_time_authentication.rb
-  # class OneTimeAuthentication < OneTimePassword::Models::OneTimeAuthentication
+  # class OneTimeAuthentication < ActiveRecord::Base
   #   enum function_name: OneTimePassword::FUNCTION_NAMES
+  
+  #   include OneTimePassword::OneTimeAuthenticationModel
   # end
   # ```
   FUNCTION_NAMES = {
