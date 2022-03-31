@@ -6,9 +6,7 @@ class TestUsersController < ApplicationController
       return render :json => {}, status: 400
     end
 
-    context = OneTimeAuthentication.find_context(
-      OneTimePassword::FUNCTION_NAMES[:sign_up]
-    )
+    context = OneTimeAuthentication.find_context(:sign_up)
     one_time_authentication = OneTimeAuthentication.create_one_time_authentication(
       context,
       params[:email].downcase
@@ -35,9 +33,7 @@ class TestUsersController < ApplicationController
       return render :json => {}, status: 400
     end
 
-    context = OneTimeAuthentication.find_context(
-      OneTimePassword::FUNCTION_NAMES[:sign_up]
-    )
+    context = OneTimeAuthentication.find_context(:sign_up)
     one_time_authentication = OneTimeAuthentication.find_one_time_authentication(
       context,
       params[:email].downcase
