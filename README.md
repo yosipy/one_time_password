@@ -4,12 +4,6 @@ __* This Gem is still incomplete.__
 
 Short description and motivation.
 
-## Usage
-```ruby
-
-
-```
-
 ## Installation
 Add this line to your application's Gemfile:
 
@@ -25,6 +19,12 @@ $ bundle
 Or install it yourself as:
 ```bash
 $ gem install one_time_password
+```
+
+## Usage
+```ruby
+
+
 ```
 
 ## Sequence diagram
