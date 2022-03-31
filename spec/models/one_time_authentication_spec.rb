@@ -641,6 +641,14 @@ describe 'OneTimeAuthentication' do
             ).to eq(false)
           end
         end
+
+        it 'Multiply failed_count' do
+          travel_to beginning_of_validity_period.since(30.minutes).since(1.second) do
+            expect{
+              one_time_authentication.authenticate_one_time_password!('0'*10)
+            }.to change{one_time_authentication.failed_count}.by(1)
+          end
+        end
       end
 
       context 'In validity period' do
@@ -652,6 +660,14 @@ describe 'OneTimeAuthentication' do
               expect(
                 one_time_authentication.authenticate_one_time_password!('0'*10)
               ).to eq(true)
+            end
+          end
+
+          it 'Not multiply failed_count' do
+            travel_to beginning_of_validity_period.since(30.minutes).ago(1.second) do
+              expect{
+                one_time_authentication.authenticate_one_time_password!('0'*10)
+              }.to change{one_time_authentication.failed_count}.by(0)
             end
           end
         end
@@ -666,6 +682,14 @@ describe 'OneTimeAuthentication' do
               ).to eq(false)
             end
           end
+
+          it 'Multiply failed_count' do
+            travel_to beginning_of_validity_period.since(30.minutes).ago(1.second) do
+              expect{
+                one_time_authentication.authenticate_one_time_password!('0'*10)
+              }.to change{one_time_authentication.failed_count}.by(1)
+            end
+          end
         end
   
         context 'failed_count > max_authenticate_password_count' do
@@ -676,6 +700,14 @@ describe 'OneTimeAuthentication' do
               expect(
                 one_time_authentication.authenticate_one_time_password!('0'*10)
               ).to eq(false)
+            end
+          end
+
+          it 'Multiply failed_count' do
+            travel_to beginning_of_validity_period.since(30.minutes).ago(1.second) do
+              expect{
+                one_time_authentication.authenticate_one_time_password!('0'*10)
+              }.to change{one_time_authentication.failed_count}.by(1)
             end
           end
         end
@@ -691,6 +723,14 @@ describe 'OneTimeAuthentication' do
             ).to eq(false)
           end
         end
+
+        it 'Multiply failed_count' do
+          travel_to beginning_of_validity_period.since(30.minutes).since(1.second) do
+            expect{
+              one_time_authentication.authenticate_one_time_password!('0'*10)
+            }.to change{one_time_authentication.failed_count}.by(1)
+          end
+        end
       end
 
       context 'In validity period' do
@@ -699,6 +739,14 @@ describe 'OneTimeAuthentication' do
             expect(
               one_time_authentication.authenticate_one_time_password!('9'*10)
             ).to eq(false)
+          end
+        end
+
+        it 'Multiply failed_count' do
+          travel_to beginning_of_validity_period.since(30.minutes).ago(1.second) do
+            expect{
+              one_time_authentication.authenticate_one_time_password!('9'*10)
+            }.to change{one_time_authentication.failed_count}.by(1)
           end
         end
       end
