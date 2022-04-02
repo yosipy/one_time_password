@@ -3,6 +3,7 @@
 /log/*.log
 /pkg/
 /tmp/
+/vendor/
 /spec/dummy/config/initializers/one_time_password.rb
 /spec/dummy/app/models/one_time_authentication.rb
 /spec/dummy/db/migrate/*_create_one_time_authentication.rb
@@ -13,3 +14,4 @@
 /spec/dummy/storage/
 /spec/dummy/tmp/
 Gemfile.lock
+.ruby-version
