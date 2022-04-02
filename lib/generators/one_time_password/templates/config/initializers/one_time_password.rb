@@ -15,12 +15,12 @@ module OneTimePassword
   }
 
   # {
-  #   function_name: Name each function.(Symbol)
-  #   version: Version each function_name.(Integer)
-  #   expires_in: Password validity time.(ActiveSupport::Duration)
-  #   max_authenticate_password_count: Number of times user can enter password each generated password.(Integer)
-  #   password_length: Password length. At 6, for example, the password would be 123456.(Integer)
-  #   password_failed_limit:
+  #   function_name (Symbol): Name each function.
+  #   version (Integer): Version each function_name.
+  #   expires_in (ActiveSupport::Duration): Password validity time.
+  #   max_authenticate_password_count (Integer): Number of times user can enter password each generated password.
+  #   password_length (Integer): Password length. At 6, for example, the password would be 123456.
+  #   password_failed_limit (Integer) & password_failed_period (ActiveSupport::Duration):
   #     If you try to authenticate with the wrong password a password_failed_limit times
   #     within the time set by password_failed_period, you will not be able to generate a new password.
   # }
