@@ -7,12 +7,12 @@ Gem::Specification.new do |spec|
   spec.email       = ["yosi.contact@gmail.com"]
   spec.homepage    = "https://github.com/yosipy/one_time_password"
   spec.summary     = "This Gem can be used to create 2FA (Two-Factor Authentication) function, email address verification function for member registration and etc in Ruby on Rails."
-  # spec.description = "todo: Description of OneTimePassword."
+  # spec.description = ""
   spec.license     = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the "allowed_push_host"
   # to allow pushing to a single host or delete this section to allow pushing to any host.
-  # spec.metadata["allowed_push_host"] = "todo: Set to 'http://mygemserver.com'"
+  # spec.metadata["allowed_push_host"] = ""
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/yosipy/one_time_password"
