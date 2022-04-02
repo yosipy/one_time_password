@@ -42,7 +42,9 @@ module OneTimePassword
         context
       end
 
-      def create_one_time_authentication(context, user_key)
+      def create_one_time_authentication(context, user_key, user_key_downcase: true)
+        user_key = user_key.downcase if user_key_downcase
+
         recent_failed_authenticate_password_count =
           OneTimeAuthentication
             .recent_failed_authenticate_password_count(
@@ -68,7 +70,9 @@ module OneTimePassword
         one_time_authentication
       end
 
-      def find_one_time_authentication(context, user_key)
+      def find_one_time_authentication(context, user_key, user_key_downcase: true)
+        user_key = user_key.downcase if user_key_downcase
+
         OneTimeAuthentication
           .where(function_name: context[:function_name])
           .where(version: context[:version])

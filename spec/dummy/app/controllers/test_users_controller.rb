@@ -9,7 +9,7 @@ class TestUsersController < ApplicationController
     context = OneTimeAuthentication.find_context(:sign_up)
     one_time_authentication = OneTimeAuthentication.create_one_time_authentication(
       context,
-      params[:email].downcase
+      params[:email]
     )
     if one_time_authentication.present?
       # success
@@ -36,7 +36,7 @@ class TestUsersController < ApplicationController
     context = OneTimeAuthentication.find_context(:sign_up)
     one_time_authentication = OneTimeAuthentication.find_one_time_authentication(
       context,
-      params[:email].downcase
+      params[:email]
     )
     new_client_token = one_time_authentication.authenticate_one_time_client_token!(params[:client_token])
     if new_client_token

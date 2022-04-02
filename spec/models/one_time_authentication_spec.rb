@@ -373,6 +373,33 @@ describe 'OneTimeAuthentication' do
         end
       end
     end
+
+    describe 'user_key_downcase' do
+      let(:uppercase_user_key) { 'USER@example.com' }
+
+      context 'user_key_downcase is true(default)' do
+        it 'user_key is downcase string' do
+          expect(
+            OneTimeAuthentication.create_one_time_authentication(
+              sign_in_context,
+              uppercase_user_key
+            ).user_key
+          ).to eq('user@example.com')
+        end
+      end
+
+      context 'user_key_downcase is false' do
+        it 'user_key is include uppercase string' do
+          expect(
+            OneTimeAuthentication.create_one_time_authentication(
+              sign_in_context,
+              uppercase_user_key,
+              user_key_downcase: false
+            ).user_key
+          ).to eq('USER@example.com')
+        end
+      end
+    end
   end
 
   describe '#self.find_one_time_authentication' do
@@ -456,6 +483,47 @@ describe 'OneTimeAuthentication' do
         expect(
           OneTimeAuthentication.find_one_time_authentication(sign_in_context, user_key)
         ).to eq(nil)
+      end
+    end
+
+    describe 'user_key_downcase' do
+      let(:uppercase_user_key) { 'USER@example.com' }
+      let!(:lowercase_user_key_one_time_authentication) do
+        FactoryBot.create(
+          :one_time_authentication,
+          function_name: :sign_in,
+          user_key: user_key
+        )
+      end
+      let!(:uppercase_user_key_one_time_authentication) do
+        FactoryBot.create(
+          :one_time_authentication,
+          function_name: :sign_in,
+          user_key: uppercase_user_key
+        )
+      end
+
+      context 'user_key_downcase is true(default)' do
+        it 'user_key is downcase string' do
+          expect(
+            OneTimeAuthentication.find_one_time_authentication(
+              sign_in_context,
+              uppercase_user_key
+            ).user_key
+          ).to eq('user@example.com')
+        end
+      end
+
+      context 'user_key_downcase is false' do
+        it 'user_key is include uppercase string' do
+          expect(
+            OneTimeAuthentication.find_one_time_authentication(
+              sign_in_context,
+              uppercase_user_key,
+              user_key_downcase: false
+            ).user_key
+          ).to eq('USER@example.com')
+        end
       end
     end
   end
