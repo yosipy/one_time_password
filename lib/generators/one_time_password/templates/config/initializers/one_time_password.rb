@@ -1,7 +1,7 @@
 module OneTimePassword
   # Example: has sign_up, sign_in and change_email
 
-  # using function_name in OneTimeAuthentication Model.
+  # Using function_name in OneTimeAuthentication Model enum.
   # ```
   # # app/models/one_time_authentication.rb
   # class OneTimeAuthentication < OneTimePassword::Models::OneTimeAuthentication
@@ -13,11 +13,14 @@ module OneTimePassword
   }
 
   # {
-  #   function_name: OneTimeAuthentication's function_name index.(Integer)
-  #   version: Version each function_name.(String)
-  #   expires_in: (ActiveSupport::Duration)
-  #   max_authenticate_password_count: Number of times you can enter your password.(Integer)
-  #   password_length: Password length.At 6, for example, the password would be 123456.(Integer)
+  #   function_name: Name each function.(Symbol)
+  #   version: Version each function_name.(Integer)
+  #   expires_in: Password validity time.(ActiveSupport::Duration)
+  #   max_authenticate_password_count: Number of times user can enter password each generated password.(Integer)
+  #   password_length: Password length. At 6, for example, the password would be 123456.(Integer)
+  #   password_failed_limit:
+  #     If you try to authenticate with the wrong password a password_failed_limit times
+  #     within the time set by password_failed_period, you will not be able to generate a new password.
   # }
   CONTEXTS = [
     {
