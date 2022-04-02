@@ -60,7 +60,7 @@ class TestUsersController < ApplicationController
 
     # error
     return render :json => {}, status: 401
-  rescue => e
+  rescue
     # error
     return render :json => {}, status: 401
   end
