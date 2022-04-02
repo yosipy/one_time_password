@@ -1,6 +1,3 @@
-__* This Gem is still incomplete.__
-
-
 # OneTimePassword
 
 This Gem can be used to create 2FA (Two-Factor Authentication) function, email address verification function for member registration and etc in Ruby on Rails.
