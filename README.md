@@ -3,7 +3,8 @@ __* This Gem is still incomplete.__
 
 # OneTimePassword
 
-Short description and motivation.
+This Gem can be used to create 2FA (Two-Factor Authentication) function, email address verification function for member registration and etc in Ruby on Rails.
+
 
 
 ## Installation
@@ -22,6 +23,7 @@ Or install it yourself as:
 ```bash
 $ gem install one_time_password
 ```
+
 
 
 ## Usage
@@ -69,6 +71,7 @@ Hash, one of `CONTEXTS`:
 For more information, see the [implementation of OneTimePassword :: OneTimeAuthenticationModel](https://github.com/yosipy/one_time_password/blob/main/lib/one_time_password/one_time_authentication_model.rb).
 
 
+
 ## Example and its sequence diagram
 
 See [sign up exsample](https://github.com/yosipy/one_time_password/blob/main/spec/dummy/app/controllers/test_users_controller.rb).
@@ -78,8 +81,10 @@ Sequence diagram.
 ![sequence diagram image](document/sequence_diagram/sequencediagram.png)
 
 
+
 <!-- ## Contributing
 Contribution directions go here. -->
+
 
 
 ## License
