@@ -15,3 +15,4 @@
 /spec/dummy/tmp/
 Gemfile.lock
 .ruby-version
+one_time_password-*.gem
