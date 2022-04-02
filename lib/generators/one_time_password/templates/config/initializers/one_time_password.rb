@@ -1,5 +1,6 @@
 module OneTimePassword
-  # Example: has sign_up, sign_in and change_email
+  # Example: has sign_up, sign_in and change_email.
+  # Please rewrite!
 
   # Using function_name in OneTimeAuthentication Model enum.
   # ```
@@ -11,7 +12,7 @@ module OneTimePassword
   # end
   # ```
   FUNCTION_NAMES = {
-    sign_up: 0, sign_in: 1, change_email: 2  # Please rewrite
+    sign_up: 0, sign_in: 1, change_email: 2
   }
 
   # {
