@@ -4,8 +4,10 @@ module OneTimePassword
   # using function_name in OneTimeAuthentication Model.
   # ```
   # # app/models/one_time_authentication.rb
-  # class OneTimeAuthentication < OneTimePassword::Models::OneTimeAuthentication
+  # class OneTimeAuthentication < ActiveRecord::Base
   #   enum function_name: OneTimePassword::FUNCTION_NAMES
+  
+  #   include OneTimePassword::OneTimeAuthenticationModel
   # end
   # ```
   FUNCTION_NAMES = {
@@ -13,7 +15,7 @@ module OneTimePassword
   }
 
   # {
-  #   function_name: OneTimeAuthentication's function_name index.(Integer)
+  #   function_name: OneTimeAuthentication's function_name index.(Symbol)
   #   version: Version each function_name.(String)
   #   expires_in: (ActiveSupport::Duration)
   #   max_authenticate_password_count: Number of times you can enter your password.(Integer)
@@ -21,7 +23,7 @@ module OneTimePassword
   # }
   CONTEXTS = [
     {
-      function_name: FUNCTION_NAMES[:sign_up],
+      function_name: :sign_up,
       version: 0,
       expires_in: 30.minutes,
       max_authenticate_password_count: 5,
@@ -30,7 +32,7 @@ module OneTimePassword
       password_failed_period: 1.hour
     },
     {
-      function_name: FUNCTION_NAMES[:sign_in],
+      function_name: :sign_in,
       version: 0,
       expires_in: 30.minutes,
       max_authenticate_password_count: 5,
@@ -39,7 +41,7 @@ module OneTimePassword
       password_failed_period: 1.hour
     },
     # {
-    #   function_name: FUNCTION_NAMES[:change_email],
+    #   function_name: :change_email,
     #   version: 0,
     #   expires_in: 30.minutes,
     #   max_authenticate_password_count: 5,
