@@ -26,7 +26,7 @@ $ gem install one_time_password
 
 ## Usage
 
-Run command for an installation.
+### Run command for an installation.
 
 ```bash
 bundle exec rails g one_time_password:install
@@ -43,7 +43,7 @@ And run migration.
 bundle exec rails db:migrate
 ```
 
-Rewrite `FUNCTION_NAMES` and `CONTEXTS` in initializer settings.
+### Rewrite `FUNCTION_NAMES` and `CONTEXTS` in initializer settings.
 
 Configuration in `config/initializers/one_time_password.rb`.
 
@@ -61,8 +61,15 @@ Hash, one of `CONTEXTS`:
 | password_failed_limit (Integer)<br>password_failed_period (ActiveSupport::Duration) | If you try to authenticate with the wrong password a password_failed_limit times within the time set by password_failed_period, you will not be able to generate a new password. |
 |     |     |
 
+### See example and its sequence diagram
+[here](#example-and-its-sequence-diagram)
 
-## Exsample
+### `OneTimePassword::OneTimeAuthentication`'s methods.
+
+For more information, see the [implementation of OneTimePassword :: OneTimeAuthenticationModel](https://github.com/yosipy/one_time_password/blob/main/lib/one_time_password/one_time_authentication_model.rb).
+
+
+## Example and its sequence diagram
 
 See [sign up exsample](https://github.com/yosipy/one_time_password/blob/main/spec/dummy/app/controllers/test_users_controller.rb).
 
