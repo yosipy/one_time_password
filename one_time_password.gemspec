@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.authors     = ["yosipy"]
   spec.email       = ["yosi.contact@gmail.com"]
   spec.homepage    = "https://github.com/yosipy/one_time_password"
-  spec.summary     = "One time password.(todo: Write a short summary, because RubyGems requires one.)"
+  spec.summary     = "This Gem can be used to create 2FA (Two-Factor Authentication) function, email address verification function for member registration and etc in Ruby on Rails."
   # spec.description = "todo: Description of OneTimePassword."
   spec.license     = "MIT"
 
