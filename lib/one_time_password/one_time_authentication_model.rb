@@ -26,23 +26,28 @@ module OneTimePassword
           .first
   
         if context.nil?
-          raise ArgumentError.new('Not found context.')
+          raise ArgumentError, 'Not found context.'
         elsif context[:expires_in].class != ActiveSupport::Duration
-          raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:expires_in]')
+          raise RuntimeError, 'Mistake OneTimePassword::CONTEXTS[:expires_in].'
         elsif context[:max_authenticate_password_count].class != Integer
-          raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:max_authenticate_password_count]')
+          raise RuntimeError, 'Mistake OneTimePassword::CONTEXTS[:max_authenticate_password_count].'
         elsif context[:password_length].class != Integer
-          raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:password_length]')
+          raise RuntimeError, 'Mistake OneTimePassword::CONTEXTS[:password_length].'
         elsif context[:password_failed_limit].class != Integer
-          raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:password_failed_limit]')
+          raise RuntimeError, 'Mistake OneTimePassword::CONTEXTS[:password_failed_limit].'
         elsif context[:password_failed_period].class != ActiveSupport::Duration
-          raise RuntimeError.new('Mistake OneTimePassword::CONTEXTS[:password_failed_period]')
+          raise RuntimeError, 'Mistake OneTimePassword::CONTEXTS[:password_failed_period].'
         end
   
         context
       end
 
       def create_one_time_authentication(context, user_key, user_key_downcase: true)
+        if user_key.blank?
+          raise OneTimePassword::Errors::NoUserKeyArgmentError,
+            'Not present user_key.'
+        end
+
         user_key = user_key.downcase if user_key_downcase
 
         recent_failed_authenticate_password_count =
@@ -71,6 +76,11 @@ module OneTimePassword
       end
 
       def find_one_time_authentication(context, user_key, user_key_downcase: true)
+        if user_key.blank?
+          raise OneTimePassword::Errors::NoUserKeyArgmentError,
+            'Not present user_key.'
+        end
+
         user_key = user_key.downcase if user_key_downcase
 
         OneTimeAuthentication

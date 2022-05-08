@@ -230,15 +230,51 @@ describe 'OneTimeAuthentication' do
       context 'Not exist version' do
         it 'Raise error' do
           expect{ OneTimeAuthentication.find_context(function_name, version: 1) }
-           .to raise_error(ArgumentError, 'Not found context.')
+            .to raise_error(ArgumentError, 'Not found context.')
         end
       end
     end
+
+    context 'expires_in class is not ActiveSupport::Duration' do
+      let(:sign_up_context) do
+        {
+          function_name: :sign_up,
+          version: 0,
+          expires_in: nil,
+          max_authenticate_password_count: 5,
+          password_length: 6,
+          password_failed_limit: 10,
+          password_failed_period: 1.hour
+        }
+      end
+      let(:function_name) { :sign_up }
+
+      it 'Raise error' do
+        expect{ OneTimeAuthentication.find_context(function_name) }
+          .to raise_error(RuntimeError, 'Mistake OneTimePassword::CONTEXTS[:expires_in].')
+      end
+    end
+    # Omit test when other param than expires_in.
   end
 
   describe '#self.create_one_time_authentication' do
     let!(:now) { Time.parse('2022-3-26 12:00') }
     let(:function_name) { :sign_in }
+
+    context 'user_key is not present' do
+      it 'Raise NoUserKeyArgmentError' do
+        aggregate_failures do
+          ['', nil, [], {}].map do |not_present_user_key|
+            expect {
+              OneTimeAuthentication.create_one_time_authentication(
+                sign_in_context,
+                not_present_user_key
+              )
+            }.to raise_error(OneTimePassword::Errors::NoUserKeyArgmentError, 'Not present user_key.')
+          end
+        end
+      end
+    end
 
     context 'recent_failed_authenticate_password_count <= 10 from 1 hour ago' do
       let!(:failed_one_time_authentications) {
@@ -404,6 +440,21 @@ describe 'OneTimeAuthentication' do
 
   describe '#self.find_one_time_authentication' do
     let(:function_name) { :sign_in }
+
+    context 'user_key is not present' do
+      it 'Raise NoUserKeyArgmentError' do
+        aggregate_failures do
+          ['', nil, [], {}].map do |not_present_user_key|
+            expect {
+              OneTimeAuthentication.find_one_time_authentication(
+                sign_in_context,
+                not_present_user_key
+              )
+            }.to raise_error(OneTimePassword::Errors::NoUserKeyArgmentError, 'Not present user_key.')
+          end
+        end
+      end
+    end
 
     context 'There is a match function_name, version and user_key in the table' do
       let!(:one_time_authentications) do
