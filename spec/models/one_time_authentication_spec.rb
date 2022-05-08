@@ -234,6 +234,27 @@ describe 'OneTimeAuthentication' do
         end
       end
     end
+
+    context 'expires_in class is not ActiveSupport::Duration' do
+      let(:sign_up_context) do
+        {
+          function_name: :sign_up,
+          version: 0,
+          expires_in: nil,
+          max_authenticate_password_count: 5,
+          password_length: 6,
+          password_failed_limit: 10,
+          password_failed_period: 1.hour
+        }
+      end
+      let(:function_name) { :sign_up }
+
+      it 'Raise error' do
+        expect{ OneTimeAuthentication.find_context(function_name) }
+          .to raise_error(RuntimeError, 'Mistake OneTimePassword::CONTEXTS[:expires_in].')
+      end
+    end
+    # Omit test when other param than expires_in.
   end
 
   describe '#self.create_one_time_authentication' do
