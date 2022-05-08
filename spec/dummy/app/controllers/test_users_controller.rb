@@ -1,11 +1,5 @@
 class TestUsersController < ApplicationController
   def create_one_time_auth
-    if params[:email].blank?
-      # error
-      # Please enter your email address.
-      return render :json => {}, status: 400
-    end
-
     context = OneTimeAuthentication.find_context(:sign_up)
     one_time_authentication = OneTimeAuthentication.create_one_time_authentication(
       context,
@@ -27,12 +21,6 @@ class TestUsersController < ApplicationController
   end
 
   def create
-    if params[:email].blank?
-      # error
-      # Please enter your email address.
-      return render :json => {}, status: 400
-    end
-
     context = OneTimeAuthentication.find_context(:sign_up)
     one_time_authentication = OneTimeAuthentication.find_one_time_authentication(
       context,
