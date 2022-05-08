@@ -76,6 +76,11 @@ module OneTimePassword
       end
 
       def find_one_time_authentication(context, user_key, user_key_downcase: true)
+        if user_key.blank?
+          raise OneTimePassword::Errors::NoUserKeyArgmentError,
+            'Not present user_key.'
+        end
+
         user_key = user_key.downcase if user_key_downcase
 
         OneTimeAuthentication

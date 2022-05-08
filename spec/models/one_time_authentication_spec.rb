@@ -420,6 +420,21 @@ describe 'OneTimeAuthentication' do
   describe '#self.find_one_time_authentication' do
     let(:function_name) { :sign_in }
 
+    context 'user_key is not present' do
+      it 'Raise NoUserKeyArgmentError' do
+        aggregate_failures do
+          ['', nil, [], {}].map do |not_present_user_key|
+            expect {
+              OneTimeAuthentication.find_one_time_authentication(
+                sign_in_context,
+                not_present_user_key
+              )
+            }.to raise_error(OneTimePassword::Errors::NoUserKeyArgmentError, 'Not present user_key.')
+          end
+        end
+      end
+    end
+
     context 'There is a match function_name, version and user_key in the table' do
       let!(:one_time_authentications) do
         3.times.map do |num|
