@@ -230,7 +230,7 @@ describe 'OneTimeAuthentication' do
       context 'Not exist version' do
         it 'Raise error' do
           expect{ OneTimeAuthentication.find_context(function_name, version: 1) }
-           .to raise_error(ArgumentError, 'Not found context.')
+            .to raise_error(ArgumentError, 'Not found context.')
         end
       end
     end
