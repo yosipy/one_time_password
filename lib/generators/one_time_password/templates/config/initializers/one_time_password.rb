@@ -17,6 +17,7 @@ module OneTimePassword
 
   # {
   #   function_name (Symbol): Name each function.
+  #   version (Integer): Version each function_name.
   #   expires_in (ActiveSupport::Duration): Password validity time.
   #   max_authenticate_password_count (Integer): Number of times user can enter password each generated password.
   #   password_length (Integer): Password length. At 6, for example, the password would be 123456.
@@ -27,6 +28,7 @@ module OneTimePassword
   CONTEXTS = [
     {
       function_name: :sign_up,
+      version: 0,
       expires_in: 30.minutes,
       max_authenticate_password_count: 5,
       password_length: 6,
@@ -35,6 +37,7 @@ module OneTimePassword
     },
     {
       function_name: :sign_in,
+      version: 0,
       expires_in: 30.minutes,
       max_authenticate_password_count: 5,
       password_length: 10,
@@ -43,6 +46,7 @@ module OneTimePassword
     },
     # {
     #   function_name: :change_email,
+    #   version: 0,
     #   expires_in: 30.minutes,
     #   max_authenticate_password_count: 5,
     #   password_length: 6

@@ -17,10 +17,11 @@ module OneTimePassword
     end
 
     module ClassMethods
-      def find_context(function_name)
+      def find_context(function_name, version: 0)
         context = OneTimePassword::CONTEXTS
           .select{ |context|
-            context[:function_name] == function_name
+            context[:function_name] == function_name &&
+              context[:version] == version
           }
           .first
 
@@ -59,6 +60,7 @@ module OneTimePassword
         if recent_failed_authenticate_password_count <= context[:password_failed_limit]
           one_time_authentication = OneTimeAuthentication.new(
             function_name: context[:function_name],
+            version: context[:version],
             user_key: user_key,
             password_length: context[:password_length],
             expires_seconds: context[:expires_in].to_i,
@@ -83,6 +85,7 @@ module OneTimePassword
 
         OneTimeAuthentication
           .where(function_name: context[:function_name])
+          .where(version: context[:version])
           .where(user_key: user_key)
           .last
       end

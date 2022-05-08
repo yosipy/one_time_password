@@ -4,6 +4,7 @@ describe 'OneTimeAuthentication' do
   let(:sign_up_context) do
     {
       function_name: :sign_up,
+      version: 0,
       expires_in: 30.minutes,
       max_authenticate_password_count: 5,
       password_length: 6,
@@ -14,6 +15,7 @@ describe 'OneTimeAuthentication' do
   let(:sign_in_context) do
     {
       function_name: :sign_in,
+      version: 0,
       expires_in: 30.minutes,
       max_authenticate_password_count: 5,
       password_length: 10,
@@ -200,18 +202,36 @@ describe 'OneTimeAuthentication' do
     context 'Exist function_name' do
       let(:function_name) { :sign_up }
 
-      it 'Return selected context' do
-        expect(OneTimeAuthentication.find_context(function_name))
-          .to eq(sign_up_context)
+      context 'Exist version' do
+        it 'Return selected context' do
+          expect(OneTimeAuthentication.find_context(function_name))
+            .to eq(sign_up_context)
+        end
+      end
+
+      context 'Not exist version' do
+        it 'Raise error' do
+          expect{ OneTimeAuthentication.find_context(function_name, version: 1) }
+            .to raise_error(ArgumentError, 'Not found context.')
+        end
       end
     end
 
     context 'Not exist function_name' do
       let(:function_name) { :change_email }
 
-      it 'Raise error' do
-        expect{ OneTimeAuthentication.find_context(function_name) }
-          .to raise_error(ArgumentError, 'Not found context.')
+      context 'exist version' do
+        it 'Raise error' do
+          expect{ OneTimeAuthentication.find_context(function_name) }
+            .to raise_error(ArgumentError, 'Not found context.')
+        end
+      end
+
+      context 'Not exist version' do
+        it 'Raise error' do
+          expect{ OneTimeAuthentication.find_context(function_name, version: 1) }
+            .to raise_error(ArgumentError, 'Not found context.')
+        end
       end
     end
 
@@ -219,6 +239,7 @@ describe 'OneTimeAuthentication' do
       let(:sign_up_context) do
         {
           function_name: :sign_up,
+          version: 0,
           expires_in: nil,
           max_authenticate_password_count: 5,
           password_length: 6,
@@ -303,6 +324,7 @@ describe 'OneTimeAuthentication' do
               user_key
             )
             expect(one_time_authentication.function_name).to eq('sign_in')
+            expect(one_time_authentication.version).to eq(0)
             expect(one_time_authentication.user_key).to eq(user_key)
             expect(one_time_authentication.password_length).to eq(sign_in_context[:password_length])
             expect(one_time_authentication.expires_seconds).to eq(sign_in_context[:expires_in].to_i)
@@ -434,7 +456,7 @@ describe 'OneTimeAuthentication' do
       end
     end
 
-    context 'There is a match function_name and user_key in the table' do
+    context 'There is a match function_name, version and user_key in the table' do
       let!(:one_time_authentications) do
         3.times.map do |num|
           FactoryBot.create(
@@ -445,7 +467,7 @@ describe 'OneTimeAuthentication' do
         end
       end
   
-      it 'Return last one_time_authentication in match function_name and user_key' do
+      it 'Return last one_time_authentication in match function_name, version and user_key' do
         expect(
           OneTimeAuthentication.find_one_time_authentication(sign_in_context, user_key).id
         ).to eq(one_time_authentications.last.id)
@@ -466,6 +488,25 @@ describe 'OneTimeAuthentication' do
           FactoryBot.create(
             :one_time_authentication,
             function_name: :sign_up,
+            user_key: user_key
+          )
+        end
+      end
+  
+      it 'Return nil' do
+        expect(
+          OneTimeAuthentication.find_one_time_authentication(sign_in_context, user_key)
+        ).to eq(nil)
+      end
+    end
+
+    context 'There is not a match version in the table' do
+      let!(:one_time_authentications) do
+        3.times.map do |num|
+          FactoryBot.create(
+            :one_time_authentication,
+            function_name: :sign_in,
+            version: 1,
             user_key: user_key
           )
         end
