@@ -24,7 +24,7 @@ module OneTimePassword
               context[:version] == version
           }
           .first
-
+  
         if context.nil?
           raise ArgumentError, 'Not found context.'
         elsif context[:expires_in].class != ActiveSupport::Duration
