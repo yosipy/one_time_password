@@ -240,6 +240,21 @@ describe 'OneTimeAuthentication' do
     let!(:now) { Time.parse('2022-3-26 12:00') }
     let(:function_name) { :sign_in }
 
+    context 'user_key is not present' do
+      it 'Raise NoUserKeyArgmentError' do
+        aggregate_failures do
+          ['', nil, [], {}].map do |not_present_user_key|
+            expect {
+              OneTimeAuthentication.create_one_time_authentication(
+                sign_in_context,
+                not_present_user_key
+              )
+            }.to raise_error(OneTimePassword::Errors::NoUserKeyArgmentError, 'Not present user_key.')
+          end
+        end
+      end
+    end
+
     context 'recent_failed_authenticate_password_count <= 10 from 1 hour ago' do
       let!(:failed_one_time_authentications) {
         10.times.map do |index|
